@@ -1,0 +1,112 @@
+# Codemagic CI/CD Configuration for HeroesAndMore iOS App
+# https://docs.codemagic.io/yaml-basic-configuration/yaml-getting-started/
+
+workflows:
+  ios-workflow:
+    name: iOS Build & Deploy
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.heroesandmore.app
+      vars:
+        XCODE_WORKSPACE: "HeroesAndMore.xcworkspace"
+        XCODE_SCHEME: "HeroesAndMore"
+        APP_STORE_CONNECT_ISSUER_ID: Encrypted(...) # Add your value
+        APP_STORE_CONNECT_KEY_IDENTIFIER: Encrypted(...) # Add your value
+        APP_STORE_CONNECT_PRIVATE_KEY: Encrypted(...) # Add your value
+        CERTIFICATE_PRIVATE_KEY: Encrypted(...) # Add your value
+      xcode: latest
+      cocoapods: default
+
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch_patterns:
+        - pattern: 'main'
+          include: true
+          source: true
+        - pattern: 'release/*'
+          include: true
+          source: true
+
+    scripts:
+      - name: Set up code signing
+        script: |
+          keychain initialize
+          app-store-connect fetch-signing-files $(PRODUCT_BUNDLE_IDENTIFIER) --type IOS_APP_STORE
+          keychain add-certificates
+          xcode-project use-profiles
+
+      - name: Build iOS App
+        script: |
+          cd ios
+          xcodebuild build -project HeroesAndMore.xcodeproj \
+            -scheme HeroesAndMore \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath build/HeroesAndMore.xcarchive \
+            archive
+
+      - name: Export IPA
+        script: |
+          cd ios
+          xcodebuild -exportArchive \
+            -archivePath build/HeroesAndMore.xcarchive \
+            -exportPath build/ipa \
+            -exportOptionsPlist exportOptions.plist
+
+    artifacts:
+      - ios/build/ipa/*.ipa
+      - ios/build/*.xcarchive
+
+    publishing:
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        submit_to_testflight: true
+        beta_groups:
+          - Internal Testers
+
+      email:
+        recipients:
+          - john@heroesandmore.com
+        notify:
+          success: true
+          failure: true
+
+  ios-dev:
+    name: iOS Development Build
+    max_build_duration: 30
+    instance_type: mac_mini_m1
+
+    environment:
+      xcode: latest
+
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch_patterns:
+        - pattern: '*'
+          include: true
+          source: true
+      cancel_previous_builds: true
+
+    scripts:
+      - name: Build for testing
+        script: |
+          cd ios
+          xcodebuild build \
+            -project HeroesAndMore.xcodeproj \
+            -scheme HeroesAndMore \
+            -configuration Debug \
+            -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' \
+            CODE_SIGNING_ALLOWED=NO
+
+    artifacts:
+      - ios/build/**/*.app
