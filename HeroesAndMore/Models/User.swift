@@ -88,3 +88,23 @@ struct LoginRequest: Codable {
     let username: String
     let password: String
 }
+
+struct NotificationSettings: Codable {
+    let emailNotifications: Bool
+    let pushNewBid: Bool
+    let pushOutbid: Bool
+    let pushOffer: Bool
+    let pushOrderShipped: Bool
+    let pushMessage: Bool
+    let pushPriceAlert: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case emailNotifications = "email_notifications"
+        case pushNewBid = "push_new_bid"
+        case pushOutbid = "push_outbid"
+        case pushOffer = "push_offer"
+        case pushOrderShipped = "push_order_shipped"
+        case pushMessage = "push_message"
+        case pushPriceAlert = "push_price_alert"
+    }
+}

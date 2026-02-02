@@ -176,7 +176,70 @@ actor APIClient {
     func upload<T: Decodable>(
         path: String,
         imageData: Data,
-        imageName: String,
+        filename: String,
+        queryItems: [URLQueryItem]? = nil,
+        additionalFields: [String: String]? = nil
+    ) async throws -> T {
+        let url = try buildURL(path: path, queryItems: queryItems)
+        let boundary = UUID().uuidString
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+
+        if let token = await KeychainService.shared.get(key: Config.accessTokenKey) {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+
+        var body = Data()
+
+        // Add image
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"image\"; filename=\"\(filename)\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
+        body.append(imageData)
+        body.append("\r\n".data(using: .utf8)!)
+
+        // Add additional fields
+        if let fields = additionalFields {
+            for (key, value) in fields {
+                body.append("--\(boundary)\r\n".data(using: .utf8)!)
+                body.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n".data(using: .utf8)!)
+                body.append("\(value)\r\n".data(using: .utf8)!)
+            }
+        }
+
+        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+        request.httpBody = body
+
+        return try await execute(request: request)
+    }
+
+    // MARK: - Raw Data Request (for file downloads)
+
+    func requestRaw(
+        path: String,
+        queryItems: [URLQueryItem]? = nil
+    ) async throws -> Data {
+        let url = try buildURL(path: path, queryItems: queryItems)
+        let request = await buildRequest(url: url, method: .get)
+
+        let (data, response) = try await session.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+
+        try handleStatusCode(httpResponse.statusCode, data: data)
+        return data
+    }
+
+    // MARK: - File Upload (for collection import)
+
+    func uploadFile<T: Decodable>(
+        path: String,
+        fileData: Data,
+        fileName: String,
         additionalFields: [String: String]? = nil
     ) async throws -> T {
         let url = try buildURL(path: path)
@@ -192,11 +255,12 @@ actor APIClient {
 
         var body = Data()
 
-        // Add image
+        // Add file
+        let mimeType = fileName.hasSuffix(".json") ? "application/json" : "text/csv"
         body.append("--\(boundary)\r\n".data(using: .utf8)!)
-        body.append("Content-Disposition: form-data; name=\"image\"; filename=\"\(imageName)\"\r\n".data(using: .utf8)!)
-        body.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
-        body.append(imageData)
+        body.append("Content-Disposition: form-data; name=\"file\"; filename=\"\(fileName)\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
+        body.append(fileData)
         body.append("\r\n".data(using: .utf8)!)
 
         // Add additional fields

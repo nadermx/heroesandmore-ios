@@ -139,9 +139,15 @@ struct ListingDetail: Codable, Identifiable {
 }
 
 struct ListingImage: Codable, Identifiable {
-    var id: String { url }
+    let id: Int
     let url: String
     let thumbnail: String?
+    let isPrimary: Bool?
+
+    enum CodingKeys: String, CodingKey {
+        case id, url, thumbnail
+        case isPrimary = "is_primary"
+    }
 }
 
 struct Bid: Codable, Identifiable {
@@ -189,4 +195,89 @@ struct PaginatedResponse<T: Codable>: Codable {
     let next: String?
     let previous: String?
     let results: [T]
+}
+
+struct AutoBid: Codable, Identifiable {
+    let id: Int
+    let listing: AutoBidListing
+    let maxAmount: String
+    let isActive: Bool
+    let created: Date?
+
+    enum CodingKeys: String, CodingKey {
+        case id, listing, created
+        case maxAmount = "max_amount"
+        case isActive = "is_active"
+    }
+}
+
+struct AutoBidListing: Codable, Identifiable {
+    let id: Int
+    let title: String
+    let currentBid: String?
+    let imageUrl: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id, title
+        case currentBid = "current_bid"
+        case imageUrl = "image_url"
+    }
+}
+
+struct AuctionEvent: Codable, Identifiable {
+    let id: Int
+    let title: String
+    let description: String?
+    let imageUrl: String?
+    let startDate: Date?
+    let endDate: Date?
+    let status: String
+    let listingCount: Int
+
+    enum CodingKeys: String, CodingKey {
+        case id, title, description, status
+        case imageUrl = "image_url"
+        case startDate = "start_date"
+        case endDate = "end_date"
+        case listingCount = "listing_count"
+    }
+}
+
+struct CheckoutResponse: Codable {
+    let orderId: Int
+    let total: String
+    let subtotal: String
+    let shipping: String
+    let fee: String
+    let status: String
+
+    enum CodingKeys: String, CodingKey {
+        case total, subtotal, shipping, fee, status
+        case orderId = "order_id"
+    }
+}
+
+struct PaymentIntentResponse: Codable {
+    let clientSecret: String
+    let paymentIntentId: String
+    let amount: Int
+    let currency: String
+
+    enum CodingKeys: String, CodingKey {
+        case amount, currency
+        case clientSecret = "client_secret"
+        case paymentIntentId = "payment_intent_id"
+    }
+}
+
+struct PaymentConfirmResponse: Codable {
+    let success: Bool
+    let orderId: Int?
+    let status: String
+    let message: String?
+
+    enum CodingKeys: String, CodingKey {
+        case success, status, message
+        case orderId = "order_id"
+    }
 }

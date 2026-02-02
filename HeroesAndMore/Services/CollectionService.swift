@@ -144,4 +144,27 @@ actor CollectionService {
     func getCollectionValue(id: Int) async throws -> ValueSummary {
         return try await APIClient.shared.request(path: "/collections/\(id)/value/")
     }
+
+    func getCollectionValueHistory(id: Int) async throws -> [ValueSnapshot] {
+        return try await APIClient.shared.request(path: "/collections/\(id)/value_history/")
+    }
+
+    // MARK: - Export / Import
+
+    func exportCollection(id: Int, format: String = "json") async throws -> Data {
+        // Returns raw data for the export file
+        return try await APIClient.shared.requestRaw(
+            path: "/collections/\(id)/export/",
+            queryItems: [URLQueryItem(name: "export_format", value: format)]
+        )
+    }
+
+    func importCollection(fileData: Data, fileName: String, collectionName: String? = nil) async throws -> ImportResult {
+        return try await APIClient.shared.uploadFile(
+            path: "/collections/import/",
+            fileData: fileData,
+            fileName: fileName,
+            additionalFields: collectionName != nil ? ["name": collectionName!] : nil
+        )
+    }
 }

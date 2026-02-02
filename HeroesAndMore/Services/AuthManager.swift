@@ -155,4 +155,208 @@ class AuthManager: ObservableObject {
             return false
         }
     }
+
+    // MARK: - Google OAuth
+
+    func loginWithGoogle(idToken: String) async -> Bool {
+        isLoading = true
+        error = nil
+
+        struct GoogleAuthRequest: Codable {
+            let idToken: String
+
+            enum CodingKeys: String, CodingKey {
+                case idToken = "id_token"
+            }
+        }
+
+        do {
+            let tokens: AuthTokens = try await APIClient.shared.request(
+                path: "/auth/google/",
+                method: .post,
+                body: GoogleAuthRequest(idToken: idToken)
+            )
+
+            await KeychainService.shared.set(key: Config.accessTokenKey, value: tokens.access)
+            await KeychainService.shared.set(key: Config.refreshTokenKey, value: tokens.refresh)
+
+            await fetchCurrentUser()
+            isLoading = false
+            return true
+        } catch let apiError as APIError {
+            error = apiError.errorDescription
+            isLoading = false
+            return false
+        } catch {
+            self.error = "Google sign-in failed. Please try again."
+            isLoading = false
+            return false
+        }
+    }
+
+    // MARK: - Password Reset
+
+    func requestPasswordReset(email: String) async -> Bool {
+        struct ResetRequest: Codable {
+            let email: String
+        }
+
+        do {
+            try await APIClient.shared.requestVoid(
+                path: "/auth/password/reset/",
+                method: .post,
+                body: ResetRequest(email: email)
+            )
+            return true
+        } catch let apiError as APIError {
+            error = apiError.errorDescription
+            return false
+        } catch {
+            self.error = "Failed to send reset email"
+            return false
+        }
+    }
+
+    func confirmPasswordReset(uid: String, token: String, newPassword: String, confirmPassword: String) async -> Bool {
+        struct ConfirmRequest: Codable {
+            let uid: String
+            let token: String
+            let newPassword: String
+            let newPasswordConfirm: String
+
+            enum CodingKeys: String, CodingKey {
+                case uid, token
+                case newPassword = "new_password"
+                case newPasswordConfirm = "new_password_confirm"
+            }
+        }
+
+        do {
+            try await APIClient.shared.requestVoid(
+                path: "/auth/password/reset/confirm/",
+                method: .post,
+                body: ConfirmRequest(
+                    uid: uid,
+                    token: token,
+                    newPassword: newPassword,
+                    newPasswordConfirm: confirmPassword
+                )
+            )
+            return true
+        } catch let apiError as APIError {
+            error = apiError.errorDescription
+            return false
+        } catch {
+            self.error = "Failed to reset password"
+            return false
+        }
+    }
+
+    // MARK: - Notification Settings
+
+    func getNotificationSettings() async throws -> NotificationSettings {
+        return try await APIClient.shared.request(path: "/accounts/me/notifications/")
+    }
+
+    func updateNotificationSettings(
+        emailNotifications: Bool? = nil,
+        pushNewBid: Bool? = nil,
+        pushOutbid: Bool? = nil,
+        pushOffer: Bool? = nil,
+        pushOrderShipped: Bool? = nil,
+        pushMessage: Bool? = nil,
+        pushPriceAlert: Bool? = nil
+    ) async throws -> NotificationSettings {
+        struct UpdateRequest: Codable {
+            let emailNotifications: Bool?
+            let pushNewBid: Bool?
+            let pushOutbid: Bool?
+            let pushOffer: Bool?
+            let pushOrderShipped: Bool?
+            let pushMessage: Bool?
+            let pushPriceAlert: Bool?
+
+            enum CodingKeys: String, CodingKey {
+                case emailNotifications = "email_notifications"
+                case pushNewBid = "push_new_bid"
+                case pushOutbid = "push_outbid"
+                case pushOffer = "push_offer"
+                case pushOrderShipped = "push_order_shipped"
+                case pushMessage = "push_message"
+                case pushPriceAlert = "push_price_alert"
+            }
+        }
+
+        return try await APIClient.shared.request(
+            path: "/accounts/me/notifications/",
+            method: .patch,
+            body: UpdateRequest(
+                emailNotifications: emailNotifications,
+                pushNewBid: pushNewBid,
+                pushOutbid: pushOutbid,
+                pushOffer: pushOffer,
+                pushOrderShipped: pushOrderShipped,
+                pushMessage: pushMessage,
+                pushPriceAlert: pushPriceAlert
+            )
+        )
+    }
+
+    // MARK: - Avatar
+
+    func uploadAvatar(imageData: Data) async throws -> Profile {
+        return try await APIClient.shared.upload(
+            path: "/accounts/me/avatar/",
+            imageData: imageData,
+            filename: "avatar.jpg"
+        )
+    }
+
+    // MARK: - Recently Viewed
+
+    func getRecentlyViewed(page: Int = 1) async throws -> PaginatedResponse<Listing> {
+        return try await APIClient.shared.request(
+            path: "/accounts/me/recently-viewed/",
+            queryItems: [URLQueryItem(name: "page", value: String(page))]
+        )
+    }
+
+    func clearRecentlyViewed() async throws {
+        try await APIClient.shared.requestVoid(
+            path: "/accounts/me/recently-viewed/clear/",
+            method: .delete
+        )
+    }
+
+    // MARK: - Device Token (Push Notifications)
+
+    func registerDeviceToken(token: String, deviceType: String = "ios") async throws {
+        struct TokenRequest: Codable {
+            let token: String
+            let deviceType: String
+
+            enum CodingKeys: String, CodingKey {
+                case token
+                case deviceType = "device_type"
+            }
+        }
+
+        try await APIClient.shared.requestVoid(
+            path: "/accounts/me/device/",
+            method: .post,
+            body: TokenRequest(token: token, deviceType: deviceType)
+        )
+    }
+
+    func removeDeviceToken(token: String) async throws {
+        struct TokenRequest: Codable {
+            let token: String
+        }
+
+        try await APIClient.shared.requestVoid(
+            path: "/accounts/me/device/",
+            method: .delete,
+            body: TokenRequest(token: token)
+        )
+    }
 }

@@ -119,3 +119,17 @@ struct ValueSummary: Codable {
         case lastUpdated = "last_updated"
     }
 }
+
+struct ImportResult: Codable {
+    let collectionId: Int
+    let collectionName: String
+    let itemsImported: Int
+    let itemsTotal: Int
+
+    enum CodingKeys: String, CodingKey {
+        case collectionId = "collection_id"
+        case collectionName = "collection_name"
+        case itemsImported = "items_imported"
+        case itemsTotal = "items_total"
+    }
+}
