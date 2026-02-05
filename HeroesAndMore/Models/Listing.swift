@@ -170,11 +170,19 @@ struct Offer: Codable, Identifiable {
     let message: String?
     let status: String
     let isFromBuyer: Bool
+    let counterAmount: String?
+    let counterMessage: String?
+    let expiresAt: Date?
+    let timeRemaining: String?
     let created: Date?
 
     enum CodingKeys: String, CodingKey {
         case id, listing, amount, message, status, created
         case isFromBuyer = "is_from_buyer"
+        case counterAmount = "counter_amount"
+        case counterMessage = "counter_message"
+        case expiresAt = "expires_at"
+        case timeRemaining = "time_remaining"
     }
 }
 

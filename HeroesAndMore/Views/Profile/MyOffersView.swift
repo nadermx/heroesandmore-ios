@@ -81,6 +81,19 @@ struct OfferRow: View {
                             .font(.caption)
                             .fontWeight(.semibold)
                     }
+
+                    // Show counter-offer amount if present
+                    if let counterAmount = offer.counterAmount {
+                        HStack {
+                            Text("Counter:")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            Text("$\(counterAmount)")
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.blue)
+                        }
+                    }
                 }
 
                 Spacer()
@@ -89,7 +102,7 @@ struct OfferRow: View {
             }
 
             if offer.status == "pending" && !offer.isFromBuyer {
-                // Seller actions
+                // Seller actions for pending offers
                 HStack(spacing: 12) {
                     Button {
                         Task {
@@ -127,6 +140,51 @@ struct OfferRow: View {
                     }
                     .buttonStyle(.bordered)
                     .controlSize(.small)
+                }
+            }
+
+            if offer.status == "countered" && offer.isFromBuyer {
+                // Buyer actions for counter-offers
+                VStack(spacing: 8) {
+                    if let timeRemaining = offer.timeRemaining {
+                        HStack {
+                            Image(systemName: "clock")
+                                .font(.caption)
+                            Text("Expires in \(timeRemaining)")
+                                .font(.caption)
+                        }
+                        .foregroundStyle(.secondary)
+                    }
+
+                    HStack(spacing: 12) {
+                        Button {
+                            Task {
+                                do {
+                                    try await MarketplaceService.shared.acceptCounterOffer(offerId: offer.id)
+                                    onAction()
+                                } catch {}
+                            }
+                        } label: {
+                            Text("Accept Counter")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.small)
+
+                        Button(role: .destructive) {
+                            Task {
+                                do {
+                                    try await MarketplaceService.shared.declineCounterOffer(offerId: offer.id)
+                                    onAction()
+                                } catch {}
+                            }
+                        } label: {
+                            Text("Decline")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+                    }
                 }
             }
 

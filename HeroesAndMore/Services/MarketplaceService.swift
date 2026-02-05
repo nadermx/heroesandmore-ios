@@ -135,6 +135,22 @@ actor MarketplaceService {
         )
     }
 
+    // Buyer accepts counter-offer from seller
+    func acceptCounterOffer(offerId: Int) async throws {
+        try await APIClient.shared.requestVoid(
+            path: "/marketplace/offers/\(offerId)/accept-counter/",
+            method: .post
+        )
+    }
+
+    // Buyer declines counter-offer from seller
+    func declineCounterOffer(offerId: Int) async throws {
+        try await APIClient.shared.requestVoid(
+            path: "/marketplace/offers/\(offerId)/decline-counter/",
+            method: .post
+        )
+    }
+
     // MARK: - Orders
 
     func getOrders(page: Int = 1, type: String = "bought") async throws -> PaginatedResponse<Order> {
