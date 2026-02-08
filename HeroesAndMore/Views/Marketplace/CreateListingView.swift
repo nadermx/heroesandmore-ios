@@ -8,6 +8,7 @@ struct CreateListingView: View {
     @State private var selectedCategory: Category?
     @State private var condition = "Good"
     @State private var listingType = "fixed"
+    @State private var quantity = 1
     @State private var allowOffers = false
 
     @State private var categories: [Category] = []
@@ -62,6 +63,8 @@ struct CreateListingView: View {
                     .pickerStyle(.segmented)
 
                     if listingType == "fixed" {
+                        Stepper("Quantity: \(quantity)", value: $quantity, in: 1...9999)
+
                         Toggle("Allow Offers", isOn: $allowOffers)
                     }
                 }
@@ -131,6 +134,7 @@ struct CreateListingView: View {
                 price: price,
                 categoryId: category.id,
                 listingType: listingType,
+                quantity: listingType == "fixed" ? quantity : 1,
                 condition: condition.lowercased().replacingOccurrences(of: " ", with: "_")
             )
             createdListing = listing
@@ -152,6 +156,7 @@ struct CreateListingView: View {
         selectedCategory = nil
         condition = "Good"
         listingType = "fixed"
+        quantity = 1
         allowOffers = false
         createdListing = nil
     }

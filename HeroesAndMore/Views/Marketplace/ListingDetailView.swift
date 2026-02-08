@@ -11,6 +11,7 @@ struct ListingDetailView: View {
     @State private var showOfferSheet = false
     @State private var isWatched = false
     @State private var showFullscreenImage = false
+    @State private var selectedQuantity = 1
 
     var body: some View {
         ScrollView {
@@ -231,16 +232,24 @@ struct ListingDetailView: View {
                 .foregroundStyle(.secondary)
             }
         } else {
-            HStack {
-                Text("$\(listing.price)")
-                    .font(.title)
-                    .fontWeight(.bold)
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text("$\(listing.price)")
+                        .font(.title)
+                        .fontWeight(.bold)
 
-                Spacer()
+                    Spacer()
 
-                if listing.acceptsOffers {
-                    Text("or Best Offer")
-                        .font(.subheadline)
+                    if listing.acceptsOffers {
+                        Text("or Best Offer")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
+                if let available = listing.quantityAvailable, available > 1 {
+                    Text("\(available) available")
+                        .font(.caption)
                         .foregroundStyle(.secondary)
                 }
             }
@@ -303,24 +312,66 @@ struct ListingDetailView: View {
                     .controlSize(.large)
                 }
             } else {
-                Button {
-                    // Buy action
-                } label: {
-                    Label("Buy Now", systemImage: "cart")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
+                let available = listing.quantityAvailable ?? 1
 
-                if listing.acceptsOffers {
-                    Button {
-                        showOfferSheet = true
-                    } label: {
-                        Label("Make Offer", systemImage: "hand.raised")
+                // Quantity selector for multi-quantity listings
+                if available > 1 {
+                    HStack {
+                        Text("Quantity")
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        HStack(spacing: 12) {
+                            Button {
+                                selectedQuantity = max(1, selectedQuantity - 1)
+                            } label: {
+                                Image(systemName: "minus.circle")
+                            }
+                            .disabled(selectedQuantity <= 1)
+
+                            Text("\(selectedQuantity)")
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                                .frame(minWidth: 30)
+
+                            Button {
+                                selectedQuantity = min(available, selectedQuantity + 1)
+                            } label: {
+                                Image(systemName: "plus.circle")
+                            }
+                            .disabled(selectedQuantity >= available)
+                        }
+                    }
+                    .padding(.bottom, 4)
+                }
+
+                if available == 0 {
+                    Button {} label: {
+                        Label("Sold Out", systemImage: "xmark.circle")
                             .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(.borderedProminent)
                     .controlSize(.large)
+                    .disabled(true)
+                } else {
+                    Button {
+                        // Buy action
+                    } label: {
+                        Label(selectedQuantity > 1 ? "Buy \(selectedQuantity)" : "Buy Now", systemImage: "cart")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+
+                    if listing.acceptsOffers {
+                        Button {
+                            showOfferSheet = true
+                        } label: {
+                            Label("Make Offer", systemImage: "hand.raised")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.large)
+                    }
                 }
             }
 

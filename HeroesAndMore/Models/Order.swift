@@ -6,6 +6,7 @@ struct Order: Codable, Identifiable {
     let listing: OrderListing
     let buyer: OrderUser
     let seller: OrderUser
+    let quantity: Int?
     let total: String
     let status: String
     let statusDisplay: String
@@ -18,7 +19,7 @@ struct Order: Codable, Identifiable {
     let deliveredAt: Date?
 
     enum CodingKeys: String, CodingKey {
-        case id, listing, buyer, seller, total, status, created
+        case id, listing, buyer, seller, quantity, total, status, created
         case orderNumber = "order_number"
         case statusDisplay = "status_display"
         case shippingAddress = "shipping_address"

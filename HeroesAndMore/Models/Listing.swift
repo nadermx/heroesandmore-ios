@@ -26,6 +26,7 @@ struct Listing: Codable, Identifiable {
     let created: Date?
     let shippingPrice: String?
     let acceptsOffers: Bool
+    let quantityAvailable: Int?
 
     enum CodingKeys: String, CodingKey {
         case id, title, description, price, condition, status, seller, category, item, created
@@ -44,6 +45,7 @@ struct Listing: Codable, Identifiable {
         case endDate = "end_date"
         case shippingPrice = "shipping_price"
         case acceptsOffers = "accepts_offers"
+        case quantityAvailable = "quantity_available"
     }
 
     var priceDecimal: Decimal {
@@ -117,11 +119,14 @@ struct ListingDetail: Codable, Identifiable {
     let created: Date?
     let shippingPrice: String?
     let acceptsOffers: Bool
+    let quantity: Int?
+    let quantityAvailable: Int?
+    let quantitySold: Int?
     let bids: [Bid]?
     let relatedListings: [Listing]?
 
     enum CodingKeys: String, CodingKey {
-        case id, title, description, price, condition, status, images, seller, category, item, created, bids
+        case id, title, description, price, condition, status, images, seller, category, item, created, bids, quantity
         case currentBid = "current_bid"
         case buyNowPrice = "buy_now_price"
         case conditionDisplay = "condition_display"
@@ -134,6 +139,8 @@ struct ListingDetail: Codable, Identifiable {
         case endDate = "end_date"
         case shippingPrice = "shipping_price"
         case acceptsOffers = "accepts_offers"
+        case quantityAvailable = "quantity_available"
+        case quantitySold = "quantity_sold"
         case relatedListings = "related_listings"
     }
 }

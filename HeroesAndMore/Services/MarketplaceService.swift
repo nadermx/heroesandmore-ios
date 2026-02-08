@@ -285,11 +285,13 @@ actor MarketplaceService {
 
     // MARK: - Checkout & Payment
 
-    func checkout(listingId: Int, shippingAddressId: Int? = nil) async throws -> CheckoutResponse {
+    func checkout(listingId: Int, shippingAddressId: Int? = nil, quantity: Int = 1) async throws -> CheckoutResponse {
         struct CheckoutRequest: Codable {
             let shippingAddressId: Int?
+            let quantity: Int
 
             enum CodingKeys: String, CodingKey {
+                case quantity
                 case shippingAddressId = "shipping_address_id"
             }
         }
@@ -297,7 +299,7 @@ actor MarketplaceService {
         return try await APIClient.shared.request(
             path: "/marketplace/checkout/\(listingId)/",
             method: .post,
-            body: CheckoutRequest(shippingAddressId: shippingAddressId)
+            body: CheckoutRequest(shippingAddressId: shippingAddressId, quantity: quantity)
         )
     }
 
@@ -343,6 +345,7 @@ actor MarketplaceService {
         price: String,
         categoryId: Int,
         listingType: String = "fixed",
+        quantity: Int = 1,
         condition: String? = nil,
         gradingCompany: String? = nil,
         grade: String? = nil,
@@ -357,6 +360,7 @@ actor MarketplaceService {
             let price: String
             let categoryId: Int
             let listingType: String
+            let quantity: Int
             let condition: String?
             let gradingCompany: String?
             let grade: String?
@@ -366,7 +370,7 @@ actor MarketplaceService {
             let endDate: String?
 
             enum CodingKeys: String, CodingKey {
-                case title, description, price, condition, grade
+                case title, description, price, condition, grade, quantity
                 case categoryId = "category_id"
                 case listingType = "listing_type"
                 case gradingCompany = "grading_company"
@@ -386,6 +390,7 @@ actor MarketplaceService {
                 price: price,
                 categoryId: categoryId,
                 listingType: listingType,
+                quantity: quantity,
                 condition: condition,
                 gradingCompany: gradingCompany,
                 grade: grade,
