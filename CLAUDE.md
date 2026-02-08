@@ -38,7 +38,7 @@ Native SwiftUI iOS application for the HeroesAndMore collectibles marketplace. C
 HeroesAndMore/
 ├── App/                        # App entry, config
 │   ├── HeroesAndMoreApp.swift  # @main entry point
-│   ├── ContentView.swift       # Root navigation (MainTabView + auth routing)
+│   ├── ContentView.swift       # Root navigation (MainTabView + auth gate)
 │   └── Config.swift            # API URLs, keychain keys, pagination settings
 │
 ├── Models/                     # Data models (Codable structs)
@@ -70,7 +70,8 @@ HeroesAndMore/
     │   └── AuthView.swift      # Login/register with segmented picker
     ├── Marketplace/
     │   ├── MarketplaceView.swift
-    │   ├── ListingDetailView.swift
+    │   ├── ListingDetailView.swift    # Includes BidSheet, OfferSheet, SellYoursCTA
+    │   ├── CreateListingView.swift    # Create new listing form (Sell tab)
     │   └── SavedListingsView.swift
     ├── Collections/
     │   ├── CollectionsView.swift
@@ -97,6 +98,7 @@ HeroesAndMore/
         ├── SearchBar.swift
         ├── PriceText.swift
         ├── AsyncImageView.swift
+        ├── FullscreenImageViewer.swift  # Pinch-to-zoom, drag-pan, double-tap image viewer
         └── LoadingView.swift
 ```
 
@@ -271,6 +273,18 @@ Environment variables needed:
 3. Push to `main` branch triggers build
 4. Build auto-uploads to TestFlight
 5. Invite testers via App Store Connect
+
+## Tab Bar Layout (MainTabView)
+
+| Tab | View | Icon | Tag |
+|-----|------|------|-----|
+| Marketplace | `MarketplaceView` | `storefront` | 0 |
+| Collections | `CollectionsView` | `square.grid.2x2` | 1 |
+| Sell | `CreateListingView` | `plus.circle.fill` | 2 |
+| Prices | `PriceGuideView` | `chart.line.uptrend.xyaxis` | 3 |
+| Profile | `ProfileView` | `person.circle` | 4 |
+
+Unauthenticated users see `AuthView` instead of tabs (gated in `ContentView`).
 
 ## Common Issues
 
