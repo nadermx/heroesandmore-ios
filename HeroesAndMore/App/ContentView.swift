@@ -35,15 +35,15 @@ struct MainTabView: View {
                 }
                 .tag(1)
 
-            PriceGuideView()
+            CreateListingView()
                 .tabItem {
-                    Label("Prices", systemImage: "chart.line.uptrend.xyaxis")
+                    Label("Sell", systemImage: "plus.circle.fill")
                 }
                 .tag(2)
 
-            ScannerView()
+            PriceGuideView()
                 .tabItem {
-                    Label("Scanner", systemImage: "camera.viewfinder")
+                    Label("Prices", systemImage: "chart.line.uptrend.xyaxis")
                 }
                 .tag(3)
 

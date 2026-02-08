@@ -10,6 +10,7 @@ struct ListingDetailView: View {
     @State private var showBidSheet = false
     @State private var showOfferSheet = false
     @State private var isWatched = false
+    @State private var showFullscreenImage = false
 
     var body: some View {
         ScrollView {
@@ -73,6 +74,16 @@ struct ListingDetailView: View {
                 .tabViewStyle(.page)
                 .frame(height: 300)
                 .background(Color.black)
+                .onTapGesture {
+                    showFullscreenImage = true
+                }
+                .fullScreenCover(isPresented: $showFullscreenImage) {
+                    FullscreenImageViewer(
+                        images: listing.images,
+                        selectedIndex: $selectedImageIndex,
+                        isPresented: $showFullscreenImage
+                    )
+                }
             }
 
             VStack(alignment: .leading, spacing: 16) {
@@ -127,9 +138,46 @@ struct ListingDetailView: View {
 
                 // Action buttons
                 actionButtons(listing)
+
+                // Sell Yours CTA
+                sellYoursCTA()
             }
             .padding()
         }
+    }
+
+    @ViewBuilder
+    private func sellYoursCTA() -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Have one like this?")
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.white)
+                    Text("List yours and reach thousands of collectors.")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.7))
+                }
+
+                Spacer()
+
+                Button("Sell Yours") {
+                    // Navigate to create listing
+                }
+                .font(.caption)
+                .fontWeight(.semibold)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(.white)
+                .foregroundStyle(.black)
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+            }
+        }
+        .padding()
+        .background(Color(.systemGray6).opacity(0.1))
+        .background(Color.black)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
     @ViewBuilder
