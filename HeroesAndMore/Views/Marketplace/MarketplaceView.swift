@@ -205,6 +205,20 @@ struct ListingCard: View {
                         .font(.caption)
                         .foregroundStyle(.blue)
                 }
+
+                if listing.seller.isTrustedSeller {
+                    HStack(spacing: 2) {
+                        Image(systemName: "star.fill")
+                            .font(.system(size: 8))
+                        Text("Trusted")
+                            .font(.system(size: 10, weight: .semibold))
+                    }
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 2)
+                    .background(Color(red: 0.83, green: 0.63, blue: 0.09))
+                    .cornerRadius(4)
+                }
             }
         }
         .padding(10)

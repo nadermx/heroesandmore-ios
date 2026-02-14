@@ -136,6 +136,20 @@ struct ProfileView: View {
                         }
                     }
 
+                    if profile.isTrustedSeller {
+                        HStack(spacing: 4) {
+                            Image(systemName: "star.fill")
+                                .font(.caption)
+                            Text("Trusted Seller")
+                                .font(.caption)
+                        }
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color(red: 0.83, green: 0.63, blue: 0.09))
+                        .cornerRadius(6)
+                    }
+
                     if profile.ratingCount > 0 {
                         RatingView(rating: profile.rating, count: profile.ratingCount)
                     }

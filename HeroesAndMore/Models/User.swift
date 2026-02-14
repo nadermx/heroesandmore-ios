@@ -22,6 +22,7 @@ struct Profile: Codable, Identifiable {
     let location: String?
     let website: String?
     let isSellerVerified: Bool
+    let isTrustedSeller: Bool
     let stripeAccountComplete: Bool
     let sellerTier: String?
     let rating: Double?
@@ -35,12 +36,35 @@ struct Profile: Codable, Identifiable {
         case id, username, email, avatar, bio, location, website, rating, created
         case avatarUrl = "avatar_url"
         case isSellerVerified = "is_seller_verified"
+        case isTrustedSeller = "is_trusted_seller"
         case stripeAccountComplete = "stripe_account_complete"
         case sellerTier = "seller_tier"
         case ratingCount = "rating_count"
         case totalSalesCount = "total_sales_count"
         case isPublic = "is_public"
         case emailNotifications = "email_notifications"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(Int.self, forKey: .id)
+        username = try container.decode(String.self, forKey: .username)
+        email = try container.decode(String.self, forKey: .email)
+        avatar = try container.decodeIfPresent(String.self, forKey: .avatar)
+        avatarUrl = try container.decodeIfPresent(String.self, forKey: .avatarUrl)
+        bio = try container.decodeIfPresent(String.self, forKey: .bio)
+        location = try container.decodeIfPresent(String.self, forKey: .location)
+        website = try container.decodeIfPresent(String.self, forKey: .website)
+        isSellerVerified = try container.decode(Bool.self, forKey: .isSellerVerified)
+        isTrustedSeller = try container.decodeIfPresent(Bool.self, forKey: .isTrustedSeller) ?? false
+        stripeAccountComplete = try container.decode(Bool.self, forKey: .stripeAccountComplete)
+        sellerTier = try container.decodeIfPresent(String.self, forKey: .sellerTier)
+        rating = try container.decodeIfPresent(Double.self, forKey: .rating)
+        ratingCount = try container.decode(Int.self, forKey: .ratingCount)
+        totalSalesCount = try container.decode(Int.self, forKey: .totalSalesCount)
+        isPublic = try container.decode(Bool.self, forKey: .isPublic)
+        emailNotifications = try container.decode(Bool.self, forKey: .emailNotifications)
+        created = try container.decodeIfPresent(Date.self, forKey: .created)
     }
 }
 
@@ -53,6 +77,7 @@ struct PublicProfile: Codable {
     let rating: Double?
     let ratingCount: Int
     let isSellerVerified: Bool
+    let isTrustedSeller: Bool
     let totalSalesCount: Int
     let listingsCount: Int
     let created: Date?
@@ -62,8 +87,25 @@ struct PublicProfile: Codable {
         case avatarUrl = "avatar_url"
         case ratingCount = "rating_count"
         case isSellerVerified = "is_seller_verified"
+        case isTrustedSeller = "is_trusted_seller"
         case totalSalesCount = "total_sales_count"
         case listingsCount = "listings_count"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        username = try container.decode(String.self, forKey: .username)
+        avatarUrl = try container.decodeIfPresent(String.self, forKey: .avatarUrl)
+        bio = try container.decodeIfPresent(String.self, forKey: .bio)
+        location = try container.decodeIfPresent(String.self, forKey: .location)
+        website = try container.decodeIfPresent(String.self, forKey: .website)
+        rating = try container.decodeIfPresent(Double.self, forKey: .rating)
+        ratingCount = try container.decode(Int.self, forKey: .ratingCount)
+        isSellerVerified = try container.decode(Bool.self, forKey: .isSellerVerified)
+        isTrustedSeller = try container.decodeIfPresent(Bool.self, forKey: .isTrustedSeller) ?? false
+        totalSalesCount = try container.decode(Int.self, forKey: .totalSalesCount)
+        listingsCount = try container.decode(Int.self, forKey: .listingsCount)
+        created = try container.decodeIfPresent(Date.self, forKey: .created)
     }
 }
 

@@ -270,6 +270,20 @@ struct ListingDetailView: View {
                         Image(systemName: "checkmark.seal.fill")
                             .foregroundStyle(.blue)
                     }
+
+                    if listing.seller.isTrustedSeller {
+                        HStack(spacing: 2) {
+                            Image(systemName: "star.fill")
+                                .font(.system(size: 10))
+                            Text("Trusted")
+                                .font(.system(size: 11, weight: .semibold))
+                        }
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color(red: 0.83, green: 0.63, blue: 0.09))
+                        .cornerRadius(4)
+                    }
                 }
 
                 RatingView(rating: listing.seller.rating, count: listing.seller.ratingCount)

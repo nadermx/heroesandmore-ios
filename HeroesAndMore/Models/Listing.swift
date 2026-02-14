@@ -74,12 +74,24 @@ struct ListingSeller: Codable {
     let rating: Double?
     let ratingCount: Int
     let isVerified: Bool
+    let isTrustedSeller: Bool
 
     enum CodingKeys: String, CodingKey {
         case username, rating
         case avatarUrl = "avatar_url"
         case ratingCount = "rating_count"
         case isVerified = "is_verified"
+        case isTrustedSeller = "is_trusted_seller"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        username = try container.decode(String.self, forKey: .username)
+        avatarUrl = try container.decodeIfPresent(String.self, forKey: .avatarUrl)
+        rating = try container.decodeIfPresent(Double.self, forKey: .rating)
+        ratingCount = try container.decode(Int.self, forKey: .ratingCount)
+        isVerified = try container.decode(Bool.self, forKey: .isVerified)
+        isTrustedSeller = try container.decodeIfPresent(Bool.self, forKey: .isTrustedSeller) ?? false
     }
 }
 
@@ -248,13 +260,63 @@ struct AuctionEvent: Codable, Identifiable {
     let endDate: Date?
     let status: String
     let listingCount: Int
+    let slug: String?
+    let isPlatformEvent: Bool
+    let cadence: String?
+    let acceptingSubmissions: Bool
+    let submissionDeadline: Date?
 
     enum CodingKeys: String, CodingKey {
-        case id, title, description, status
+        case id, title, description, status, slug, cadence
         case imageUrl = "image_url"
         case startDate = "start_date"
         case endDate = "end_date"
         case listingCount = "listing_count"
+        case isPlatformEvent = "is_platform_event"
+        case acceptingSubmissions = "accepting_submissions"
+        case submissionDeadline = "submission_deadline"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(Int.self, forKey: .id)
+        title = try container.decode(String.self, forKey: .title)
+        description = try container.decodeIfPresent(String.self, forKey: .description)
+        imageUrl = try container.decodeIfPresent(String.self, forKey: .imageUrl)
+        startDate = try container.decodeIfPresent(Date.self, forKey: .startDate)
+        endDate = try container.decodeIfPresent(Date.self, forKey: .endDate)
+        status = try container.decode(String.self, forKey: .status)
+        listingCount = try container.decodeIfPresent(Int.self, forKey: .listingCount) ?? 0
+        slug = try container.decodeIfPresent(String.self, forKey: .slug)
+        isPlatformEvent = try container.decodeIfPresent(Bool.self, forKey: .isPlatformEvent) ?? false
+        cadence = try container.decodeIfPresent(String.self, forKey: .cadence)
+        acceptingSubmissions = try container.decodeIfPresent(Bool.self, forKey: .acceptingSubmissions) ?? false
+        submissionDeadline = try container.decodeIfPresent(Date.self, forKey: .submissionDeadline)
+    }
+}
+
+struct AuctionLotSubmission: Codable, Identifiable {
+    let id: Int
+    let listingId: Int
+    let listingTitle: String
+    let listingImage: String?
+    let eventName: String
+    let eventSlug: String
+    let status: String
+    let staffNotes: String?
+    let submittedAt: Date?
+    let reviewedAt: Date?
+
+    enum CodingKeys: String, CodingKey {
+        case id, status
+        case listingId = "listing_id"
+        case listingTitle = "listing_title"
+        case listingImage = "listing_image"
+        case eventName = "event_name"
+        case eventSlug = "event_slug"
+        case staffNotes = "staff_notes"
+        case submittedAt = "submitted_at"
+        case reviewedAt = "reviewed_at"
     }
 }
 

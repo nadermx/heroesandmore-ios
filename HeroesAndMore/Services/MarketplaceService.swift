@@ -260,6 +260,32 @@ actor MarketplaceService {
         )
     }
 
+    // MARK: - Platform Auctions & Submissions
+
+    func getPlatformAuctionEvents() async throws -> [AuctionEvent] {
+        return try await APIClient.shared.request(path: "/marketplace/auctions/platform/")
+    }
+
+    func submitAuctionLot(eventSlug: String, listingId: Int) async throws -> AuctionLotSubmission {
+        struct SubmitLotRequest: Codable {
+            let listingId: Int
+
+            enum CodingKeys: String, CodingKey {
+                case listingId = "listing_id"
+            }
+        }
+
+        return try await APIClient.shared.request(
+            path: "/marketplace/auctions/platform/\(eventSlug)/submit/",
+            method: .post,
+            body: SubmitLotRequest(listingId: listingId)
+        )
+    }
+
+    func getMySubmissions() async throws -> [AuctionLotSubmission] {
+        return try await APIClient.shared.request(path: "/marketplace/auctions/submissions/")
+    }
+
     // MARK: - Listing Images
 
     func uploadListingImage(listingId: Int, imageData: Data, isPrimary: Bool = false) async throws -> ListingImage {
