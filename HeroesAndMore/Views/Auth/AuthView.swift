@@ -1,4 +1,5 @@
 import SwiftUI
+import AuthenticationServices
 
 struct AuthView: View {
     @State private var showLogin = true
@@ -49,6 +50,7 @@ struct LoginView: View {
     @EnvironmentObject var authManager: AuthManager
     @State private var username = ""
     @State private var password = ""
+    @State private var showForgotPassword = false
     @FocusState private var focusedField: Field?
 
     enum Field {
@@ -98,12 +100,27 @@ struct LoginView: View {
             .padding(.horizontal)
 
             Button("Forgot Password?") {
-                // TODO: Implement forgot password
+                showForgotPassword = true
             }
             .font(.caption)
             .foregroundStyle(.secondary)
+
+            // Divider
+            HStack {
+                Rectangle().frame(height: 1).foregroundStyle(.quaternary)
+                Text("or").font(.caption).foregroundStyle(.secondary)
+                Rectangle().frame(height: 1).foregroundStyle(.quaternary)
+            }
+            .padding(.horizontal)
+
+            // Sign in with Apple
+            AppleSignInButton()
+                .padding(.horizontal)
         }
         .padding(.top, 30)
+        .sheet(isPresented: $showForgotPassword) {
+            ForgotPasswordView()
+        }
     }
 
     private func login() {
@@ -194,6 +211,16 @@ struct RegisterView: View {
                 .controlSize(.large)
                 .disabled(!isValid || authManager.isLoading)
 
+                // Divider
+                HStack {
+                    Rectangle().frame(height: 1).foregroundStyle(.quaternary)
+                    Text("or").font(.caption).foregroundStyle(.secondary)
+                    Rectangle().frame(height: 1).foregroundStyle(.quaternary)
+                }
+
+                // Sign in with Apple
+                AppleSignInButton()
+
                 Text("By creating an account, you agree to our Terms of Service and Privacy Policy.")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
@@ -212,6 +239,172 @@ struct RegisterView: View {
                 password: password,
                 passwordConfirm: passwordConfirm
             )
+        }
+    }
+}
+
+// MARK: - Apple Sign In
+
+struct AppleSignInButton: View {
+    @EnvironmentObject var authManager: AuthManager
+    @Environment(\.colorScheme) var colorScheme
+
+    var body: some View {
+        SignInWithAppleButton(.signIn) { request in
+            request.requestedScopes = [.fullName, .email]
+        } onCompletion: { result in
+            handleResult(result)
+        }
+        .signInWithAppleButtonStyle(colorScheme == .dark ? .white : .black)
+        .frame(height: 50)
+        .cornerRadius(8)
+    }
+
+    private func handleResult(_ result: Result<ASAuthorization, Error>) {
+        switch result {
+        case .success(let authorization):
+            guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
+                  let identityTokenData = credential.identityToken,
+                  let identityToken = String(data: identityTokenData, encoding: .utf8) else {
+                authManager.error = "Failed to get Apple credentials"
+                return
+            }
+
+            let firstName = credential.fullName?.givenName ?? ""
+            let lastName = credential.fullName?.familyName ?? ""
+
+            Task {
+                _ = await authManager.loginWithApple(
+                    identityToken: identityToken,
+                    firstName: firstName,
+                    lastName: lastName
+                )
+            }
+
+        case .failure(let error):
+            // Don't show error for user cancellation
+            if (error as NSError).code != ASAuthorizationError.canceled.rawValue {
+                authManager.error = "Apple sign-in failed: \(error.localizedDescription)"
+            }
+        }
+    }
+}
+
+// MARK: - Forgot Password
+
+struct ForgotPasswordView: View {
+    @EnvironmentObject var authManager: AuthManager
+    @Environment(\.dismiss) var dismiss
+    @State private var email = ""
+    @State private var isLoading = false
+    @State private var emailSent = false
+    @State private var error: String?
+    @FocusState private var emailFocused: Bool
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 24) {
+                if emailSent {
+                    // Success state
+                    VStack(spacing: 16) {
+                        Image(systemName: "envelope.badge.fill")
+                            .font(.system(size: 60))
+                            .foregroundStyle(.brandCrimson)
+
+                        Text("Check Your Email")
+                            .font(.title2)
+                            .fontWeight(.bold)
+
+                        Text("If an account exists with **\(email)**, we've sent a password reset link. Check your inbox and spam folder.")
+                            .font(.body)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+
+                        Button("Done") {
+                            dismiss()
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.large)
+                        .padding(.top, 8)
+                    }
+                    .padding(.top, 40)
+                } else {
+                    // Input state
+                    VStack(spacing: 16) {
+                        Image(systemName: "lock.rotation")
+                            .font(.system(size: 50))
+                            .foregroundStyle(.brandCrimson)
+
+                        Text("Reset Password")
+                            .font(.title2)
+                            .fontWeight(.bold)
+
+                        Text("Enter your email address and we'll send you a link to reset your password.")
+                            .font(.body)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                    }
+                    .padding(.top, 40)
+
+                    TextField("Email address", text: $email)
+                        .textFieldStyle(.roundedBorder)
+                        .textContentType(.emailAddress)
+                        .keyboardType(.emailAddress)
+                        .autocapitalization(.none)
+                        .autocorrectionDisabled()
+                        .focused($emailFocused)
+                        .submitLabel(.go)
+                        .onSubmit { sendReset() }
+                        .padding(.horizontal)
+
+                    if let error = error {
+                        Text(error)
+                            .foregroundStyle(.red)
+                            .font(.caption)
+                            .padding(.horizontal)
+                    }
+
+                    Button(action: sendReset) {
+                        if isLoading {
+                            ProgressView()
+                                .progressViewStyle(.circular)
+                                .tint(.white)
+                        } else {
+                            Text("Send Reset Link")
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    .disabled(email.isEmpty || isLoading)
+                    .padding(.horizontal)
+                }
+
+                Spacer()
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+            }
+        }
+        .onAppear { emailFocused = true }
+    }
+
+    private func sendReset() {
+        isLoading = true
+        error = nil
+
+        Task {
+            let success = await authManager.requestPasswordReset(email: email)
+            isLoading = false
+            if success {
+                emailSent = true
+            } else {
+                error = authManager.error ?? "Failed to send reset email"
+            }
         }
     }
 }

@@ -194,6 +194,48 @@ class AuthManager: ObservableObject {
         }
     }
 
+    // MARK: - Apple Sign In
+
+    func loginWithApple(identityToken: String, firstName: String = "", lastName: String = "") async -> Bool {
+        isLoading = true
+        error = nil
+
+        struct AppleAuthRequest: Codable {
+            let idToken: String
+            let firstName: String
+            let lastName: String
+
+            enum CodingKeys: String, CodingKey {
+                case idToken = "id_token"
+                case firstName = "first_name"
+                case lastName = "last_name"
+            }
+        }
+
+        do {
+            let tokens: AuthTokens = try await APIClient.shared.request(
+                path: "/auth/apple/",
+                method: .post,
+                body: AppleAuthRequest(idToken: identityToken, firstName: firstName, lastName: lastName)
+            )
+
+            await KeychainService.shared.set(key: Config.accessTokenKey, value: tokens.access)
+            await KeychainService.shared.set(key: Config.refreshTokenKey, value: tokens.refresh)
+
+            await fetchCurrentUser()
+            isLoading = false
+            return true
+        } catch let apiError as APIError {
+            error = apiError.errorDescription
+            isLoading = false
+            return false
+        } catch {
+            self.error = "Apple sign-in failed. Please try again."
+            isLoading = false
+            return false
+        }
+    }
+
     // MARK: - Password Reset
 
     func requestPasswordReset(email: String) async -> Bool {
