@@ -12,6 +12,7 @@ struct ListingDetailView: View {
     @State private var isWatched = false
     @State private var showFullscreenImage = false
     @State private var selectedQuantity = 1
+    @State private var quickBidAmount: String?
 
     var body: some View {
         ScrollView {
@@ -49,9 +50,14 @@ struct ListingDetailView: View {
         }
         .sheet(isPresented: $showBidSheet) {
             if let listing = listing {
-                BidSheet(listing: listing) {
+                BidSheet(listing: listing, prefillAmount: quickBidAmount) {
                     Task { await loadListing() }
                 }
+            }
+        }
+        .onChange(of: showBidSheet) {
+            if !showBidSheet {
+                quickBidAmount = nil
             }
         }
         .sheet(isPresented: $showOfferSheet) {
@@ -139,6 +145,9 @@ struct ListingDetailView: View {
 
                 // Action buttons
                 actionButtons(listing)
+
+                // Bid history
+                bidHistorySection(listing)
 
                 // Sell Yours CTA
                 sellYoursCTA()
@@ -230,6 +239,20 @@ struct ListingDetailView: View {
                 }
                 .font(.caption)
                 .foregroundStyle(.secondary)
+
+                // Social proof badges
+                socialProofBadges(listing)
+
+                // Comps range
+                if let comps = listing.compsRange {
+                    HStack {
+                        Text("Recent Comps:")
+                            .fontWeight(.bold)
+                        Text("$\(comps.low) – $\(comps.high)")
+                            .foregroundStyle(.brandCrimson)
+                    }
+                    .font(.subheadline)
+                }
             }
         } else {
             VStack(alignment: .leading, spacing: 4) {
@@ -251,6 +274,41 @@ struct ListingDetailView: View {
                     Text("\(available) available")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func socialProofBadges(_ listing: ListingDetail) -> some View {
+        if listing.listingType == "auction" {
+            HStack(spacing: 8) {
+                if let watchers = listing.watcherCount, watchers > 0 {
+                    Label("\(watchers) watching", systemImage: "eye")
+                        .font(.caption2)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color(.systemGray5))
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                }
+                if let recentBids = listing.recentBidCount, recentBids > 0 {
+                    Label("\(recentBids) bid\(recentBids == 1 ? "" : "s") in last minute", systemImage: "bolt.fill")
+                        .font(.caption2)
+                        .foregroundStyle(.brandCrimson)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.brandCrimson.opacity(0.1))
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                }
+                if listing.bidWarActive == true {
+                    Label("Bid war active", systemImage: "flame.fill")
+                        .font(.caption2)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.brandCrimson)
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
                 }
             }
         }
@@ -303,6 +361,34 @@ struct ListingDetailView: View {
     }
 
     @ViewBuilder
+    private func bidHistorySection(_ listing: ListingDetail) -> some View {
+        if let bids = listing.bidHistory, !bids.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Bid History")
+                    .font(.headline)
+
+                ForEach(Array(bids.enumerated()), id: \.element.id) { index, bid in
+                    HStack {
+                        if index == 0 {
+                            Image(systemName: "trophy.fill")
+                                .font(.caption)
+                                .foregroundStyle(.brandGold)
+                        }
+                        Text(bid.bidder)
+                            .fontWeight(index == 0 ? .bold : .regular)
+                            .foregroundStyle(index == 0 ? .brandCrimson : .primary)
+                        Spacer()
+                        Text("$\(bid.amount)")
+                            .fontWeight(.semibold)
+                    }
+                    .font(.subheadline)
+                    if index < bids.count - 1 { Divider() }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
     private func actionButtons(_ listing: ListingDetail) -> some View {
         VStack(spacing: 12) {
             if listing.listingType == "auction" {
@@ -314,6 +400,25 @@ struct ListingDetailView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
+
+                // Quick bid buttons
+                HStack(spacing: 8) {
+                    ForEach([10, 25, 50], id: \.self) { increment in
+                        Button("+$\(increment)") {
+                            let currentPrice = Decimal(string: listing.currentBid ?? listing.price) ?? 0
+                            let newBid = currentPrice + Decimal(increment)
+                            quickBidAmount = "\(newBid)"
+                            showBidSheet = true
+                        }
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                        .background(Color(.systemGray5))
+                        .foregroundStyle(.primary)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                }
 
                 if listing.buyNowPrice != nil {
                     Button {
@@ -430,6 +535,7 @@ struct ListingDetailView: View {
 
 struct BidSheet: View {
     let listing: ListingDetail
+    var prefillAmount: String?
     var onBidPlaced: () -> Void
 
     @Environment(\.dismiss) var dismiss
@@ -454,6 +560,27 @@ struct BidSheet: View {
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                     }
+                }
+
+                // Quick bid buttons
+                Section {
+                    HStack(spacing: 8) {
+                        ForEach([10, 25, 50], id: \.self) { increment in
+                            Button("+$\(increment)") {
+                                let currentPrice = Decimal(string: listing.currentBid ?? listing.price) ?? 0
+                                let newBid = currentPrice + Decimal(increment)
+                                bidAmount = "\(newBid)"
+                            }
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 8)
+                            .background(Color(.systemGray5))
+                            .foregroundStyle(.primary)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+                    }
+                    .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
                 }
 
                 if let error = error {
@@ -482,6 +609,11 @@ struct BidSheet: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Cancel") { dismiss() }
+                }
+            }
+            .onAppear {
+                if let prefillAmount = prefillAmount {
+                    bidAmount = prefillAmount
                 }
             }
         }

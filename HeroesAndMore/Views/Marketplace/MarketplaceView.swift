@@ -159,11 +159,28 @@ struct ListingCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            // Image
-            AsyncImageView(url: listing.primaryImageURL)
-                .frame(height: 140)
-                .clipped()
-                .cornerRadius(8)
+            // Image with HOT LOT badge
+            ZStack(alignment: .bottomLeading) {
+                AsyncImageView(url: listing.primaryImageURL)
+                    .frame(height: 140)
+                    .clipped()
+                    .cornerRadius(8)
+
+                if listing.isHotLot {
+                    HStack(spacing: 3) {
+                        Image(systemName: "flame.fill")
+                            .font(.system(size: 10))
+                        Text("HOT LOT")
+                            .font(.system(size: 10, weight: .bold))
+                    }
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 3)
+                    .background(Color.brandCrimson)
+                    .cornerRadius(4)
+                    .padding(6)
+                }
+            }
 
             // Title
             Text(listing.title)

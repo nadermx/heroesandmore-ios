@@ -27,6 +27,8 @@ struct Listing: Codable, Identifiable {
     let shippingPrice: String?
     let acceptsOffers: Bool
     let quantityAvailable: Int?
+    let saveCount: Int?
+    let recentBids: Int?
 
     enum CodingKeys: String, CodingKey {
         case id, title, description, price, condition, status, seller, category, item, created
@@ -46,6 +48,8 @@ struct Listing: Codable, Identifiable {
         case shippingPrice = "shipping_price"
         case acceptsOffers = "accepts_offers"
         case quantityAvailable = "quantity_available"
+        case saveCount = "save_count"
+        case recentBids = "recent_bids"
     }
 
     var priceDecimal: Decimal {
@@ -65,6 +69,10 @@ struct Listing: Codable, Identifiable {
 
     var isAuction: Bool {
         listingType == "auction"
+    }
+
+    var isHotLot: Bool {
+        (recentBids ?? 0) >= 5 || (saveCount ?? 0) >= 10
     }
 }
 
@@ -136,6 +144,12 @@ struct ListingDetail: Codable, Identifiable {
     let quantitySold: Int?
     let bids: [Bid]?
     let relatedListings: [Listing]?
+    let watcherCount: Int?
+    let recentBidCount: Int?
+    let bidWarActive: Bool?
+    let compsRange: CompsRange?
+    let bidHistory: [BidHistoryItem]?
+    let sellerIsTrusted: Bool?
 
     enum CodingKeys: String, CodingKey {
         case id, title, description, price, condition, status, images, seller, category, item, created, bids, quantity
@@ -154,7 +168,25 @@ struct ListingDetail: Codable, Identifiable {
         case quantityAvailable = "quantity_available"
         case quantitySold = "quantity_sold"
         case relatedListings = "related_listings"
+        case watcherCount = "watcher_count"
+        case recentBidCount = "recent_bid_count"
+        case bidWarActive = "bid_war_active"
+        case compsRange = "comps_range"
+        case bidHistory = "bid_history"
+        case sellerIsTrusted = "seller_is_trusted"
     }
+}
+
+struct CompsRange: Codable {
+    let low: String
+    let high: String
+}
+
+struct BidHistoryItem: Codable, Identifiable {
+    var id: String { "\(bidder)-\(amount)" }
+    let bidder: String
+    let amount: String
+    let created: String
 }
 
 struct ListingImage: Codable, Identifiable {
