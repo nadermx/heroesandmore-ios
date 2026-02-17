@@ -91,7 +91,7 @@ struct OfferRow: View {
                             Text("$\(counterAmount)")
                                 .font(.caption)
                                 .fontWeight(.semibold)
-                                .foregroundStyle(.blue)
+                                .foregroundStyle(.brandCyan)
                         }
                     }
                 }
@@ -216,10 +216,10 @@ struct OfferRow: View {
 
     private var statusColor: Color {
         switch offer.status {
-        case "accepted": return .green
-        case "declined": return .red
-        case "pending": return .orange
-        case "countered": return .blue
+        case "accepted": return .brandMint
+        case "declined": return .brandCrimson
+        case "pending": return .brandGold
+        case "countered": return .brandCyan
         default: return .secondary
         }
     }

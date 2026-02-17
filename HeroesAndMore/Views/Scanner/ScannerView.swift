@@ -17,7 +17,7 @@ struct ScannerView: View {
                 // Scanner icon
                 Image(systemName: "camera.viewfinder")
                     .font(.system(size: 80))
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.brandCrimson)
 
                 Text("Scan Collectibles")
                     .font(.title2)
@@ -236,7 +236,7 @@ struct ScanMatchCard: View {
                         Text("$\(price)")
                             .font(.subheadline)
                             .fontWeight(.semibold)
-                            .foregroundStyle(.green)
+                            .foregroundStyle(.brandMint)
                     }
                 }
 
@@ -263,11 +263,11 @@ struct ScanMatchCard: View {
 
     private var confidenceColor: Color {
         if match.confidencePercent >= 90 {
-            return .green
+            return .brandMint
         } else if match.confidencePercent >= 70 {
-            return .orange
+            return .brandGold
         } else {
-            return .red
+            return .brandCrimson
         }
     }
 }

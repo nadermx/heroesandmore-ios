@@ -51,7 +51,7 @@ struct PriceText: View {
     private var foregroundColor: Color {
         switch style {
         case .highlighted:
-            return .green
+            return .brandMint
         default:
             return .primary
         }
@@ -76,7 +76,7 @@ struct PriceChangeText: View {
                         .font(.caption2)
                 }
             }
-            .foregroundStyle(isPositive ? .green : .red)
+            .foregroundStyle(isPositive ? .brandMint : .brandCrimson)
         }
     }
 
@@ -99,7 +99,7 @@ struct RatingView: View {
             ForEach(0..<5) { index in
                 Image(systemName: starImage(for: index))
                     .font(.caption)
-                    .foregroundStyle(.yellow)
+                    .foregroundStyle(.brandGold)
             }
 
             if showCount && count > 0 {

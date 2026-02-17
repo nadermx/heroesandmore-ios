@@ -163,7 +163,7 @@ struct WishlistItemRow: View {
                 if item.matchingListingsCount > 0 {
                     Text("\(item.matchingListingsCount) matching listings")
                         .font(.caption)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.brandCrimson)
                 }
             }
 

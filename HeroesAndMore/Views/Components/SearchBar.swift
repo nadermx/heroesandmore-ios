@@ -44,7 +44,7 @@ struct FilterChip: View {
                 .font(.subheadline)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
-                .background(isSelected ? Color.blue : Color(.systemGray5))
+                .background(isSelected ? Color.brandCrimson : Color(.systemGray5))
                 .foregroundStyle(isSelected ? .white : .primary)
                 .cornerRadius(16)
         }

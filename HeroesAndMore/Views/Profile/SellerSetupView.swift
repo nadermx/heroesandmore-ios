@@ -14,7 +14,7 @@ struct SellerSetupView: View {
                 VStack(spacing: 16) {
                     Image(systemName: "storefront")
                         .font(.system(size: 60))
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.brandCrimson)
 
                     Text("Start Selling on Heroes & More")
                         .font(.title2)
@@ -32,28 +32,28 @@ struct SellerSetupView: View {
                 VStack(spacing: 12) {
                     benefitRow(
                         icon: "dollarsign.circle.fill",
-                        iconColor: .green,
+                        iconColor: .brandMint,
                         title: "Secure Payments",
                         description: "Payments processed securely through Stripe. Funds deposited directly to your bank account."
                     )
 
                     benefitRow(
                         icon: "person.2.fill",
-                        iconColor: .blue,
+                        iconColor: .brandCyan,
                         title: "Reach Collectors",
                         description: "Access a community of thousands of collectors looking for items like yours."
                     )
 
                     benefitRow(
                         icon: "chart.line.uptrend.xyaxis",
-                        iconColor: .orange,
+                        iconColor: .brandGold,
                         title: "Seller Tools",
                         description: "Bulk import, inventory management, analytics, and more to grow your business."
                     )
 
                     benefitRow(
                         icon: "shield.checkmark.fill",
-                        iconColor: .purple,
+                        iconColor: .brandGold,
                         title: "Trusted Seller Program",
                         description: "Build your reputation and earn reduced commissions with our Trusted Seller program."
                     )
@@ -168,7 +168,7 @@ struct SellerSetupView: View {
                 .fontWeight(.bold)
                 .foregroundStyle(.white)
                 .frame(width: 24, height: 24)
-                .background(Color.blue)
+                .background(Color.brandCrimson)
                 .clipShape(Circle())
 
             Text(text)
@@ -187,7 +187,7 @@ struct SafariView: UIViewControllerRepresentable {
         configuration.entersReaderIfAvailable = false
 
         let safari = SFSafariViewController(url: url, configuration: configuration)
-        safari.preferredControlTintColor = .systemBlue
+        safari.preferredControlTintColor = UIColor(red: 0.90, green: 0.22, blue: 0.27, alpha: 1.0)
         return safari
     }
 

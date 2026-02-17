@@ -270,8 +270,8 @@ struct TrendingItemCard: View {
 
     private var trendColor: Color {
         switch item.trend {
-        case "up": return .green
-        case "down": return .red
+        case "up": return .brandMint
+        case "down": return .brandCrimson
         default: return .secondary
         }
     }

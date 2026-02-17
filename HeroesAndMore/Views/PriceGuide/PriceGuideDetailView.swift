@@ -178,13 +178,13 @@ struct PriceGuideDetailView: View {
                         x: .value("Date", dataPoint.date),
                         y: .value("Price", Double(dataPoint.averagePrice) ?? 0)
                     )
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.brandCyan)
 
                     AreaMark(
                         x: .value("Date", dataPoint.date),
                         y: .value("Price", Double(dataPoint.averagePrice) ?? 0)
                     )
-                    .foregroundStyle(.blue.opacity(0.1))
+                    .foregroundStyle(.brandCyan.opacity(0.1))
                 }
                 .frame(height: 200)
                 .padding(.horizontal)

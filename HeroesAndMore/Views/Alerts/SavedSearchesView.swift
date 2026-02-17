@@ -93,8 +93,8 @@ struct SavedSearchRow: View {
                     .fontWeight(.medium)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(Color.blue.opacity(0.2))
-                    .foregroundStyle(.blue)
+                    .background(Color.brandCyan.opacity(0.2))
+                    .foregroundStyle(.brandCyan)
                     .cornerRadius(8)
             }
         }

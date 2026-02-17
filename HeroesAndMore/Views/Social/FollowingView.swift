@@ -104,7 +104,7 @@ struct FollowUserRow: View {
                     .fontWeight(.medium)
             }
             .buttonStyle(.bordered)
-            .tint(user.isFollowing ? .secondary : .blue)
+            .tint(user.isFollowing ? .secondary : .brandCrimson)
         }
     }
 }

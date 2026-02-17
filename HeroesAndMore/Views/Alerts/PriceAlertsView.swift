@@ -81,17 +81,17 @@ struct PriceAlertRow: View {
                         Text("$\(alert.targetPrice)")
                     }
                     .font(.caption)
-                    .foregroundStyle(alert.alertType == "below" ? .green : .red)
+                    .foregroundStyle(alert.alertType == "below" ? .brandMint : .brandCrimson)
                 }
 
                 Spacer()
 
                 if alert.triggered {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
+                        .foregroundStyle(.brandMint)
                 } else if alert.isActive {
                     Image(systemName: "bell.fill")
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.brandCyan)
                 } else {
                     Image(systemName: "bell.slash")
                         .foregroundStyle(.secondary)

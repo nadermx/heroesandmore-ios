@@ -21,7 +21,7 @@ struct SubmitLotView: View {
                 // Info banner
                 HStack(spacing: 10) {
                     Image(systemName: "info.circle.fill")
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.brandCyan)
                     Text("Select one of your active listings to submit as a lot for \"\(eventTitle)\".")
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -41,7 +41,7 @@ struct SubmitLotView: View {
                     VStack(spacing: 16) {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 48))
-                            .foregroundStyle(.green)
+                            .foregroundStyle(.brandMint)
 
                         Text(successMessage)
                             .font(.headline)
@@ -140,7 +140,7 @@ struct SubmitLotView: View {
                             Text("Auction")
                                 .font(.caption2)
                         }
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(.brandGold)
                     }
 
                     if let condition = listing.conditionDisplay {
@@ -157,7 +157,7 @@ struct SubmitLotView: View {
                 ProgressView()
             } else {
                 Image(systemName: "arrow.up.circle")
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.brandCrimson)
                     .font(.title3)
             }
         }

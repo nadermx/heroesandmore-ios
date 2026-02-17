@@ -163,7 +163,7 @@ struct ProfileView: View {
                     if profile.isSellerVerified {
                         HStack(spacing: 4) {
                             Image(systemName: "checkmark.seal.fill")
-                                .foregroundStyle(.blue)
+                                .foregroundStyle(.brandCyan)
                             Text("Verified Seller")
                                 .font(.caption)
                         }
@@ -179,7 +179,7 @@ struct ProfileView: View {
                         .foregroundStyle(.white)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(Color(red: 0.83, green: 0.63, blue: 0.09))
+                        .background(Color.brandGold)
                         .cornerRadius(6)
                     }
 

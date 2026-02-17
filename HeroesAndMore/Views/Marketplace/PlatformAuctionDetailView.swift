@@ -67,7 +67,7 @@ struct PlatformAuctionDetailView: View {
                 Rectangle()
                     .fill(
                         LinearGradient(
-                            colors: [Color(red: 0.1, green: 0.1, blue: 0.2), Color(red: 0.15, green: 0.15, blue: 0.3)],
+                            colors: [Color.brandNavy, Color.brandNavyLight],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -133,11 +133,11 @@ struct PlatformAuctionDetailView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(spacing: 6) {
                         Image(systemName: "arrow.up.circle.fill")
-                            .foregroundStyle(.green)
+                            .foregroundStyle(.brandMint)
                         Text("Accepting Lot Submissions")
                             .font(.subheadline)
                             .fontWeight(.semibold)
-                            .foregroundStyle(.green)
+                            .foregroundStyle(.brandMint)
                     }
 
                     if let deadline = event.submissionDeadline {
@@ -159,7 +159,7 @@ struct PlatformAuctionDetailView: View {
                         HStack(spacing: 6) {
                             Image(systemName: "star.fill")
                                 .font(.caption)
-                                .foregroundStyle(Color(red: 0.83, green: 0.63, blue: 0.09))
+                                .foregroundStyle(Color.brandGold)
                             Text("Only Trusted Sellers can submit lots to platform auctions.")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
@@ -283,11 +283,11 @@ struct PlatformAuctionDetailView: View {
     private func submissionStatusColor(_ status: String) -> Color {
         switch status.lowercased() {
         case "approved":
-            return .green
+            return .brandMint
         case "rejected":
-            return .red
+            return .brandCrimson
         case "pending":
-            return .orange
+            return .brandGold
         case "withdrawn":
             return .gray
         default:
@@ -300,13 +300,13 @@ struct PlatformAuctionDetailView: View {
     private var statusColor: Color {
         switch event.status.lowercased() {
         case "live":
-            return .green
+            return .brandMint
         case "preview":
-            return .blue
+            return .brandCyan
         case "ended":
             return .gray
         case "draft":
-            return .orange
+            return .brandGold
         default:
             return .secondary
         }

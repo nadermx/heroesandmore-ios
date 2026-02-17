@@ -76,7 +76,7 @@ struct AuctionEventCard: View {
                 Rectangle()
                     .fill(
                         LinearGradient(
-                            colors: [Color(red: 0.1, green: 0.1, blue: 0.2), Color(red: 0.15, green: 0.15, blue: 0.3)],
+                            colors: [Color.brandNavy, Color.brandNavyLight],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -159,11 +159,11 @@ struct AuctionEventCard: View {
                 if event.acceptingSubmissions {
                     HStack(spacing: 6) {
                         Image(systemName: "arrow.up.circle.fill")
-                            .foregroundStyle(.green)
+                            .foregroundStyle(.brandMint)
                         Text("Accepting Submissions")
                             .font(.caption)
                             .fontWeight(.semibold)
-                            .foregroundStyle(.green)
+                            .foregroundStyle(.brandMint)
 
                         if let deadline = event.submissionDeadline {
                             Text("until \(deadline, style: .date)")
@@ -194,13 +194,13 @@ struct AuctionEventCard: View {
     private var statusColor: Color {
         switch event.status.lowercased() {
         case "live":
-            return .green
+            return .brandMint
         case "preview":
-            return .blue
+            return .brandCyan
         case "ended":
             return .gray
         case "draft":
-            return .orange
+            return .brandGold
         default:
             return .secondary
         }

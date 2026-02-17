@@ -90,7 +90,7 @@ struct ConversationRow: View {
                     .foregroundStyle(.white)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(.blue)
+                    .background(.brandCrimson)
                     .clipShape(Capsule())
             }
         }
@@ -140,7 +140,7 @@ struct ConversationView: View {
                     Image(systemName: "paperplane.fill")
                         .foregroundStyle(.white)
                         .padding(10)
-                        .background(.blue)
+                        .background(.brandCrimson)
                         .clipShape(Circle())
                 }
                 .disabled(newMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
@@ -193,7 +193,7 @@ struct MessageBubble: View {
                 Text(message.content)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
-                    .background(isFromMe ? Color.blue : Color(.systemGray5))
+                    .background(isFromMe ? Color.brandCrimson : Color(.systemGray5))
                     .foregroundStyle(isFromMe ? .white : .primary)
                     .cornerRadius(16)
 

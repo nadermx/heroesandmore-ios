@@ -122,7 +122,7 @@ struct CollectionCard: View {
                 if let totalValue = collection.totalValue {
                     Text("Value: $\(totalValue)")
                         .font(.subheadline)
-                        .foregroundStyle(.green)
+                        .foregroundStyle(.brandMint)
                 }
             }
 

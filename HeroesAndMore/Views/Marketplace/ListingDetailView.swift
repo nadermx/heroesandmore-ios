@@ -193,7 +193,7 @@ struct ListingDetailView: View {
                         Text("$\(bid)")
                             .font(.title)
                             .fontWeight(.bold)
-                            .foregroundStyle(.blue)
+                            .foregroundStyle(.brandCrimson)
                     } else {
                         Text("No bids yet")
                             .foregroundStyle(.secondary)
@@ -268,7 +268,7 @@ struct ListingDetailView: View {
 
                     if listing.seller.isVerified {
                         Image(systemName: "checkmark.seal.fill")
-                            .foregroundStyle(.blue)
+                            .foregroundStyle(.brandCyan)
                     }
 
                     if listing.seller.isTrustedSeller {
@@ -281,7 +281,7 @@ struct ListingDetailView: View {
                         .foregroundStyle(.white)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
-                        .background(Color(red: 0.83, green: 0.63, blue: 0.09))
+                        .background(Color.brandGold)
                         .cornerRadius(4)
                     }
                 }

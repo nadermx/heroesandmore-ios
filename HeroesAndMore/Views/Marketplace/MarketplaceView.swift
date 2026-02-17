@@ -179,7 +179,7 @@ struct ListingCard: View {
                         if let currentBid = listing.currentBid {
                             Text("$\(currentBid)")
                                 .font(.headline)
-                                .foregroundStyle(.blue)
+                                .foregroundStyle(.brandCrimson)
                         } else {
                             Text("$\(listing.price)")
                                 .font(.headline)
@@ -197,7 +197,7 @@ struct ListingCard: View {
 
                 if listing.isAuction {
                     Image(systemName: "gavel")
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(.brandGold)
                 }
             }
 
@@ -211,7 +211,7 @@ struct ListingCard: View {
                 if listing.seller.isVerified {
                     Image(systemName: "checkmark.seal.fill")
                         .font(.caption)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.brandCyan)
                 }
 
                 if listing.seller.isTrustedSeller {
@@ -224,7 +224,7 @@ struct ListingCard: View {
                     .foregroundStyle(.white)
                     .padding(.horizontal, 5)
                     .padding(.vertical, 2)
-                    .background(Color(red: 0.83, green: 0.63, blue: 0.09))
+                    .background(Color.brandGold)
                     .cornerRadius(4)
                 }
             }

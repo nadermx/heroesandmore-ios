@@ -156,7 +156,7 @@ struct ForumThreadRow: View {
                 if thread.isPinned {
                     Image(systemName: "pin.fill")
                         .font(.caption)
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(.brandGold)
                 }
 
                 Text(thread.title)

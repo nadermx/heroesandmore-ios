@@ -116,7 +116,7 @@ struct CollectionDetailView: View {
                             .font(.caption)
                     }
                     .foregroundStyle(
-                        summary.totalGainLoss.hasPrefix("-") ? .red : .green
+                        summary.totalGainLoss.hasPrefix("-") ? .brandCrimson : .brandMint
                     )
                 }
             }
@@ -211,7 +211,7 @@ struct CollectionItemRow: View {
                 if let currentValue = item.currentValue {
                     Text("$\(currentValue)")
                         .font(.subheadline)
-                        .foregroundStyle(.green)
+                        .foregroundStyle(.brandMint)
                 }
             }
 
@@ -276,7 +276,7 @@ struct AddCollectionItemSheet: View {
                                     Spacer()
                                     if selectedItem?.id == item.id {
                                         Image(systemName: "checkmark")
-                                            .foregroundStyle(.blue)
+                                            .foregroundStyle(.brandCyan)
                                     }
                                 }
                             }
@@ -290,7 +290,7 @@ struct AddCollectionItemSheet: View {
                             Text(selected.name)
                                 .fontWeight(.medium)
                         }
-                        .foregroundStyle(.green)
+                        .foregroundStyle(.brandMint)
                     }
                 }
 

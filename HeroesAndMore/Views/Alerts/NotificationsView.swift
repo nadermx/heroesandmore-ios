@@ -30,7 +30,7 @@ struct NotificationsView: View {
                                         await loadNotifications()
                                     }
                                 }
-                                .tint(.blue)
+                                .tint(.brandCrimson)
                             }
                     }
                 }
@@ -102,7 +102,7 @@ struct NotificationRow: View {
 
             if !notification.isRead {
                 Circle()
-                    .fill(.blue)
+                    .fill(.brandCrimson)
                     .frame(width: 10, height: 10)
             }
         }
@@ -123,12 +123,12 @@ struct NotificationRow: View {
 
     private var iconColor: Color {
         switch notification.type {
-        case "new_bid": return .green
-        case "outbid": return .orange
-        case "offer": return .blue
-        case "order_shipped": return .purple
-        case "message": return .blue
-        case "price_alert": return .green
+        case "new_bid": return .brandMint
+        case "outbid": return .brandGold
+        case "offer": return .brandCyan
+        case "order_shipped": return .brandCyan
+        case "message": return .brandCyan
+        case "price_alert": return .brandMint
         default: return .secondary
         }
     }

@@ -98,10 +98,10 @@ struct OrderRow: View {
 
     private var statusColor: Color {
         switch order.status {
-        case "completed": return .green
-        case "shipped": return .blue
-        case "pending": return .orange
-        case "cancelled": return .red
+        case "completed": return .brandMint
+        case "shipped": return .brandCyan
+        case "pending": return .brandGold
+        case "cancelled": return .brandCrimson
         default: return .secondary
         }
     }
@@ -201,7 +201,7 @@ struct OrderDetailView: View {
                             Text(carrier)
                         }
                         Text(tracking)
-                            .foregroundStyle(.blue)
+                            .foregroundStyle(.brandCyan)
                     }
                 }
                 .padding()
@@ -275,10 +275,10 @@ struct OrderDetailView: View {
 
     private func statusColor(_ status: String) -> Color {
         switch status {
-        case "completed": return .green
-        case "shipped": return .blue
-        case "pending", "paid": return .orange
-        case "cancelled": return .red
+        case "completed": return .brandMint
+        case "shipped": return .brandCyan
+        case "pending", "paid": return .brandGold
+        case "cancelled": return .brandCrimson
         default: return .secondary
         }
     }
@@ -373,7 +373,7 @@ struct ReviewOrderSheet: View {
                         Spacer()
                         ForEach(1...5, id: \.self) { star in
                             Image(systemName: star <= rating ? "star.fill" : "star")
-                                .foregroundStyle(.yellow)
+                                .foregroundStyle(.brandGold)
                                 .onTapGesture {
                                     rating = star
                                 }

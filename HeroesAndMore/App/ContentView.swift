@@ -53,7 +53,7 @@ struct MainTabView: View {
                 }
                 .tag(4)
         }
-        .tint(.blue)
+        .tint(.brandCrimson)
     }
 }
 

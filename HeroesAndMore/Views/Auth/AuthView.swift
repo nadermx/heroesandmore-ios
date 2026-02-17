@@ -10,7 +10,7 @@ struct AuthView: View {
                 VStack(spacing: 16) {
                     Image(systemName: "shield.checkered")
                         .font(.system(size: 80))
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.brandCrimson)
 
                     Text("HeroesAndMore")
                         .font(.largeTitle)
