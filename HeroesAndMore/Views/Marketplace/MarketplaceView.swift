@@ -46,6 +46,14 @@ struct MarketplaceView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
+                        PlatformAuctionsView()
+                    } label: {
+                        Image(systemName: "gavel")
+                    }
+                }
+
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
                         SavedListingsView()
                     } label: {
                         Image(systemName: "heart")

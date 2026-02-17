@@ -277,6 +277,36 @@ struct AuctionEvent: Codable, Identifiable {
         case submissionDeadline = "submission_deadline"
     }
 
+    init(
+        id: Int,
+        title: String,
+        description: String? = nil,
+        imageUrl: String? = nil,
+        startDate: Date? = nil,
+        endDate: Date? = nil,
+        status: String,
+        listingCount: Int = 0,
+        slug: String? = nil,
+        isPlatformEvent: Bool = false,
+        cadence: String? = nil,
+        acceptingSubmissions: Bool = false,
+        submissionDeadline: Date? = nil
+    ) {
+        self.id = id
+        self.title = title
+        self.description = description
+        self.imageUrl = imageUrl
+        self.startDate = startDate
+        self.endDate = endDate
+        self.status = status
+        self.listingCount = listingCount
+        self.slug = slug
+        self.isPlatformEvent = isPlatformEvent
+        self.cadence = cadence
+        self.acceptingSubmissions = acceptingSubmissions
+        self.submissionDeadline = submissionDeadline
+    }
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(Int.self, forKey: .id)

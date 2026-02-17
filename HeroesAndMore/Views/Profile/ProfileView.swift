@@ -40,6 +40,39 @@ struct ProfileView: View {
                     }
                 }
 
+                // Selling
+                Section("Selling") {
+                    if let profile = authManager.currentUser, !profile.stripeAccountComplete {
+                        NavigationLink {
+                            SellerSetupView()
+                        } label: {
+                            Label {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Set Up Seller Account")
+                                    Text("Start selling on Heroes & More")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            } icon: {
+                                Image(systemName: "storefront")
+                            }
+                        }
+                    } else {
+                        NavigationLink {
+                            // Seller dashboard will go here
+                            Text("Seller Dashboard")
+                        } label: {
+                            Label("Seller Dashboard", systemImage: "chart.bar")
+                        }
+                    }
+
+                    NavigationLink {
+                        PlatformAuctionsView()
+                    } label: {
+                        Label("Platform Auctions", systemImage: "gavel")
+                    }
+                }
+
                 // Alerts & Wishlists
                 Section("Alerts") {
                     NavigationLink {
