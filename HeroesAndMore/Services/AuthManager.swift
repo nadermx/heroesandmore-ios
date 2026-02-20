@@ -372,21 +372,16 @@ class AuthManager: ObservableObject {
 
     // MARK: - Device Token (Push Notifications)
 
-    func registerDeviceToken(token: String, deviceType: String = "ios") async throws {
+    func registerDeviceToken(token: String, platform: String = "ios") async throws {
         struct TokenRequest: Codable {
             let token: String
-            let deviceType: String
-
-            enum CodingKeys: String, CodingKey {
-                case token
-                case deviceType = "device_type"
-            }
+            let platform: String
         }
 
         try await APIClient.shared.requestVoid(
             path: "/accounts/me/device/",
             method: .post,
-            body: TokenRequest(token: token, deviceType: deviceType)
+            body: TokenRequest(token: token, platform: platform)
         )
     }
 
