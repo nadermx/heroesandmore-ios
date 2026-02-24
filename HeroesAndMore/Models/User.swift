@@ -23,6 +23,7 @@ struct Profile: Codable, Identifiable {
     let website: String?
     let isSellerVerified: Bool
     let isTrustedSeller: Bool
+    let isFoundingMember: Bool
     let stripeAccountComplete: Bool
     let sellerTier: String?
     let rating: Double?
@@ -37,6 +38,7 @@ struct Profile: Codable, Identifiable {
         case avatarUrl = "avatar_url"
         case isSellerVerified = "is_seller_verified"
         case isTrustedSeller = "is_trusted_seller"
+        case isFoundingMember = "is_founding_member"
         case stripeAccountComplete = "stripe_account_complete"
         case sellerTier = "seller_tier"
         case ratingCount = "rating_count"
@@ -57,6 +59,7 @@ struct Profile: Codable, Identifiable {
         website = try container.decodeIfPresent(String.self, forKey: .website)
         isSellerVerified = try container.decode(Bool.self, forKey: .isSellerVerified)
         isTrustedSeller = try container.decodeIfPresent(Bool.self, forKey: .isTrustedSeller) ?? false
+        isFoundingMember = try container.decodeIfPresent(Bool.self, forKey: .isFoundingMember) ?? false
         stripeAccountComplete = try container.decode(Bool.self, forKey: .stripeAccountComplete)
         sellerTier = try container.decodeIfPresent(String.self, forKey: .sellerTier)
         rating = try container.decodeIfPresent(Double.self, forKey: .rating)
@@ -78,6 +81,7 @@ struct PublicProfile: Codable {
     let ratingCount: Int
     let isSellerVerified: Bool
     let isTrustedSeller: Bool
+    let isFoundingMember: Bool
     let totalSalesCount: Int
     let listingsCount: Int
     let created: Date?
@@ -88,6 +92,7 @@ struct PublicProfile: Codable {
         case ratingCount = "rating_count"
         case isSellerVerified = "is_seller_verified"
         case isTrustedSeller = "is_trusted_seller"
+        case isFoundingMember = "is_founding_member"
         case totalSalesCount = "total_sales_count"
         case listingsCount = "listings_count"
     }
@@ -103,6 +108,7 @@ struct PublicProfile: Codable {
         ratingCount = try container.decode(Int.self, forKey: .ratingCount)
         isSellerVerified = try container.decode(Bool.self, forKey: .isSellerVerified)
         isTrustedSeller = try container.decodeIfPresent(Bool.self, forKey: .isTrustedSeller) ?? false
+        isFoundingMember = try container.decodeIfPresent(Bool.self, forKey: .isFoundingMember) ?? false
         totalSalesCount = try container.decode(Int.self, forKey: .totalSalesCount)
         listingsCount = try container.decode(Int.self, forKey: .listingsCount)
         created = try container.decodeIfPresent(Date.self, forKey: .created)

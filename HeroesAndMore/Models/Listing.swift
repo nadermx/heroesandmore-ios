@@ -29,9 +29,11 @@ struct Listing: Codable, Identifiable {
     let quantityAvailable: Int?
     let saveCount: Int?
     let recentBids: Int?
+    let collectorNotes: String?
 
     enum CodingKeys: String, CodingKey {
         case id, title, description, price, condition, status, seller, category, item, created
+        case collectorNotes = "collector_notes"
         case currentBid = "current_bid"
         case buyNowPrice = "buy_now_price"
         case conditionDisplay = "condition_display"
@@ -83,6 +85,7 @@ struct ListingSeller: Codable {
     let ratingCount: Int
     let isVerified: Bool
     let isTrustedSeller: Bool
+    let isFounding: Bool
 
     enum CodingKeys: String, CodingKey {
         case username, rating
@@ -90,6 +93,7 @@ struct ListingSeller: Codable {
         case ratingCount = "rating_count"
         case isVerified = "is_verified"
         case isTrustedSeller = "is_trusted_seller"
+        case isFounding = "is_founding_member"
     }
 
     init(from decoder: Decoder) throws {
@@ -100,6 +104,7 @@ struct ListingSeller: Codable {
         ratingCount = try container.decode(Int.self, forKey: .ratingCount)
         isVerified = try container.decode(Bool.self, forKey: .isVerified)
         isTrustedSeller = try container.decodeIfPresent(Bool.self, forKey: .isTrustedSeller) ?? false
+        isFounding = try container.decodeIfPresent(Bool.self, forKey: .isFounding) ?? false
     }
 }
 
@@ -150,6 +155,8 @@ struct ListingDetail: Codable, Identifiable {
     let compsRange: CompsRange?
     let bidHistory: [BidHistoryItem]?
     let sellerIsTrusted: Bool?
+    let sellerIsFounding: Bool?
+    let collectorNotes: String?
 
     enum CodingKeys: String, CodingKey {
         case id, title, description, price, condition, status, images, seller, category, item, created, bids, quantity
@@ -174,6 +181,8 @@ struct ListingDetail: Codable, Identifiable {
         case compsRange = "comps_range"
         case bidHistory = "bid_history"
         case sellerIsTrusted = "seller_is_trusted"
+        case sellerIsFounding = "seller_is_founding"
+        case collectorNotes = "collector_notes"
     }
 }
 

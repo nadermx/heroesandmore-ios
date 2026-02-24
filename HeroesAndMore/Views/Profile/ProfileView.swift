@@ -183,6 +183,20 @@ struct ProfileView: View {
                         .cornerRadius(6)
                     }
 
+                    if profile.isFoundingMember {
+                        HStack(spacing: 4) {
+                            Image(systemName: "sparkles")
+                                .font(.caption)
+                            Text("Founding Collector")
+                                .font(.caption)
+                        }
+                        .foregroundStyle(Color(red: 0.88, green: 0.88, blue: 0.88))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color(red: 0.1, green: 0.1, blue: 0.18))
+                        .cornerRadius(6)
+                    }
+
                     if profile.ratingCount > 0 {
                         RatingView(rating: profile.rating, count: profile.ratingCount)
                     }

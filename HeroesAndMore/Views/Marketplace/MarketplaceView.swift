@@ -244,6 +244,29 @@ struct ListingCard: View {
                     .background(Color.brandGold)
                     .cornerRadius(4)
                 }
+
+                if listing.seller.isFounding {
+                    HStack(spacing: 2) {
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 8))
+                        Text("Founding")
+                            .font(.system(size: 10, weight: .semibold))
+                    }
+                    .foregroundStyle(Color(red: 0.88, green: 0.88, blue: 0.88))
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 2)
+                    .background(Color(red: 0.1, green: 0.1, blue: 0.18))
+                    .cornerRadius(4)
+                }
+            }
+
+            // Collector notes
+            if let notes = listing.collectorNotes, !notes.isEmpty {
+                Text(notes)
+                    .font(.system(size: 11))
+                    .italic()
+                    .foregroundStyle(.gray)
+                    .lineLimit(1)
             }
         }
         .padding(10)

@@ -121,6 +121,32 @@ struct ListingDetailView: View {
                     }
                 }
 
+                // Collector notes callout
+                if let notes = listing.collectorNotes, !notes.isEmpty {
+                    HStack(spacing: 0) {
+                        Rectangle()
+                            .fill(Color.brandGold)
+                            .frame(width: 3)
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Collector's Notes")
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.secondary)
+                            Text(notes)
+                                .font(.subheadline)
+                                .italic()
+                                .foregroundStyle(.primary)
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 10)
+
+                        Spacer()
+                    }
+                    .background(Color.brandGold.opacity(0.08))
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                }
+
                 // Condition
                 if let condition = listing.conditionDisplay {
                     HStack {
@@ -340,6 +366,20 @@ struct ListingDetailView: View {
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
                         .background(Color.brandGold)
+                        .cornerRadius(4)
+                    }
+
+                    if listing.seller.isFounding {
+                        HStack(spacing: 2) {
+                            Image(systemName: "sparkles")
+                                .font(.system(size: 10))
+                            Text("Founding")
+                                .font(.system(size: 11, weight: .semibold))
+                        }
+                        .foregroundStyle(Color(red: 0.88, green: 0.88, blue: 0.88))
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color(red: 0.1, green: 0.1, blue: 0.18))
                         .cornerRadius(4)
                     }
                 }
