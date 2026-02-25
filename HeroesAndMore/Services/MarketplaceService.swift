@@ -309,6 +309,24 @@ actor MarketplaceService {
         )
     }
 
+    // MARK: - Listing Videos
+
+    func uploadListingVideo(listingId: Int, videoData: Data, filename: String, position: Int) async throws -> ListingVideo {
+        return try await APIClient.shared.uploadFile(
+            path: "/marketplace/listings/\(listingId)/videos/",
+            fileData: videoData,
+            fileName: filename,
+            additionalFields: ["position": String(position)]
+        )
+    }
+
+    func deleteListingVideo(listingId: Int, videoId: Int) async throws {
+        try await APIClient.shared.requestVoid(
+            path: "/marketplace/listings/\(listingId)/videos/\(videoId)/",
+            method: .delete
+        )
+    }
+
     // MARK: - Checkout & Payment
 
     func checkout(listingId: Int, shippingAddressId: Int? = nil, quantity: Int = 1) async throws -> CheckoutResponse {

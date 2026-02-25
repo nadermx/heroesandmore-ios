@@ -30,10 +30,12 @@ struct Listing: Codable, Identifiable {
     let saveCount: Int?
     let recentBids: Int?
     let collectorNotes: String?
+    let hasVideo: Bool?
 
     enum CodingKeys: String, CodingKey {
         case id, title, description, price, condition, status, seller, category, item, created
         case collectorNotes = "collector_notes"
+        case hasVideo = "has_video"
         case currentBid = "current_bid"
         case buyNowPrice = "buy_now_price"
         case conditionDisplay = "condition_display"
@@ -157,9 +159,12 @@ struct ListingDetail: Codable, Identifiable {
     let sellerIsTrusted: Bool?
     let sellerIsFounding: Bool?
     let collectorNotes: String?
+    let videos: [ListingVideo]?
+    let videoUrl: String?
+    let videoEmbedUrl: String?
 
     enum CodingKeys: String, CodingKey {
-        case id, title, description, price, condition, status, images, seller, category, item, created, bids, quantity
+        case id, title, description, price, condition, status, images, seller, category, item, created, bids, quantity, videos
         case currentBid = "current_bid"
         case buyNowPrice = "buy_now_price"
         case conditionDisplay = "condition_display"
@@ -183,6 +188,8 @@ struct ListingDetail: Codable, Identifiable {
         case sellerIsTrusted = "seller_is_trusted"
         case sellerIsFounding = "seller_is_founding"
         case collectorNotes = "collector_notes"
+        case videoUrl = "video_url"
+        case videoEmbedUrl = "video_embed_url"
     }
 }
 
@@ -196,6 +203,13 @@ struct BidHistoryItem: Codable, Identifiable {
     let bidder: String
     let amount: String
     let created: String
+}
+
+struct ListingVideo: Codable, Identifiable {
+    var id: String { "\(order)-\(url)" }
+    let url: String
+    let order: Int
+    let type: String?
 }
 
 struct ListingImage: Codable, Identifiable {

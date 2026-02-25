@@ -94,6 +94,9 @@ struct ListingDetailView: View {
             }
 
             VStack(alignment: .leading, spacing: 16) {
+                // Video Section
+                videoSection(listing)
+
                 // Title
                 Text(listing.title)
                     .font(.title2)
@@ -214,6 +217,62 @@ struct ListingDetailView: View {
         .background(Color(.systemGray6).opacity(0.1))
         .background(Color.black)
         .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    @ViewBuilder
+    private func videoSection(_ listing: ListingDetail) -> some View {
+        let hasVideos = (listing.videos != nil && !listing.videos!.isEmpty) || (listing.videoEmbedUrl != nil && !listing.videoEmbedUrl!.isEmpty)
+
+        if hasVideos {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 6) {
+                    Image(systemName: "play.rectangle.fill")
+                        .foregroundStyle(.brandCrimson)
+                    Text("Video")
+                        .font(.headline)
+                }
+
+                if let embedUrl = listing.videoEmbedUrl, !embedUrl.isEmpty, let url = URL(string: embedUrl) {
+                    Link(destination: url) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.black)
+                                .aspectRatio(16/9, contentMode: .fit)
+                            VStack(spacing: 8) {
+                                Image(systemName: "play.circle.fill")
+                                    .font(.system(size: 48))
+                                    .foregroundStyle(.white)
+                                Text("Watch Video")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.white.opacity(0.8))
+                            }
+                        }
+                    }
+                }
+
+                if let videos = listing.videos {
+                    ForEach(videos) { video in
+                        if let url = URL(string: video.url) {
+                            Link(destination: url) {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color.black.opacity(0.9))
+                                        .aspectRatio(16/9, contentMode: .fit)
+                                    VStack(spacing: 8) {
+                                        Image(systemName: "play.circle.fill")
+                                            .font(.system(size: 48))
+                                            .foregroundStyle(.white)
+                                        Text("Video \(video.order)")
+                                            .font(.subheadline)
+                                            .foregroundStyle(.white.opacity(0.8))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @ViewBuilder
