@@ -42,7 +42,29 @@ struct ProfileView: View {
 
                 // Selling
                 Section("Selling") {
-                    if let profile = authManager.currentUser, !profile.stripeAccountComplete {
+                    if let profile = authManager.currentUser, profile.isSellerVerified {
+                        NavigationLink {
+                            // Seller dashboard will go here
+                            Text("Seller Dashboard")
+                        } label: {
+                            Label("Seller Dashboard", systemImage: "chart.bar")
+                        }
+
+                        NavigationLink {
+                            PayoutSettingsView()
+                        } label: {
+                            Label {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Payout Settings")
+                                    Text("Manage PayPal & Stripe payouts")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            } icon: {
+                                Image(systemName: "banknote")
+                            }
+                        }
+                    } else {
                         NavigationLink {
                             SellerSetupView()
                         } label: {
@@ -56,13 +78,6 @@ struct ProfileView: View {
                             } icon: {
                                 Image(systemName: "storefront")
                             }
-                        }
-                    } else {
-                        NavigationLink {
-                            // Seller dashboard will go here
-                            Text("Seller Dashboard")
-                        } label: {
-                            Label("Seller Dashboard", systemImage: "chart.bar")
                         }
                     }
 

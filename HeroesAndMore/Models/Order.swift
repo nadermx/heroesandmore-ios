@@ -13,6 +13,7 @@ struct Order: Codable, Identifiable {
     let shippingAddress: ShippingAddress?
     let trackingNumber: String?
     let trackingCarrier: String?
+    let paymentMethod: String?
     let created: Date?
     let paidAt: Date?
     let shippedAt: Date?
@@ -25,6 +26,7 @@ struct Order: Codable, Identifiable {
         case shippingAddress = "shipping_address"
         case trackingNumber = "tracking_number"
         case trackingCarrier = "tracking_carrier"
+        case paymentMethod = "payment_method"
         case paidAt = "paid_at"
         case shippedAt = "shipped_at"
         case deliveredAt = "delivered_at"

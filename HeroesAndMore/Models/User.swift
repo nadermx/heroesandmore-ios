@@ -25,6 +25,8 @@ struct Profile: Codable, Identifiable {
     let isTrustedSeller: Bool
     let isFoundingMember: Bool
     let stripeAccountComplete: Bool
+    let paypalEmail: String?
+    let preferredPayoutMethod: String?
     let sellerTier: String?
     let rating: Double?
     let ratingCount: Int
@@ -40,6 +42,8 @@ struct Profile: Codable, Identifiable {
         case isTrustedSeller = "is_trusted_seller"
         case isFoundingMember = "is_founding_member"
         case stripeAccountComplete = "stripe_account_complete"
+        case paypalEmail = "paypal_email"
+        case preferredPayoutMethod = "preferred_payout_method"
         case sellerTier = "seller_tier"
         case ratingCount = "rating_count"
         case totalSalesCount = "total_sales_count"
@@ -61,6 +65,8 @@ struct Profile: Codable, Identifiable {
         isTrustedSeller = try container.decodeIfPresent(Bool.self, forKey: .isTrustedSeller) ?? false
         isFoundingMember = try container.decodeIfPresent(Bool.self, forKey: .isFoundingMember) ?? false
         stripeAccountComplete = try container.decode(Bool.self, forKey: .stripeAccountComplete)
+        paypalEmail = try container.decodeIfPresent(String.self, forKey: .paypalEmail)
+        preferredPayoutMethod = try container.decodeIfPresent(String.self, forKey: .preferredPayoutMethod)
         sellerTier = try container.decodeIfPresent(String.self, forKey: .sellerTier)
         rating = try container.decodeIfPresent(Double.self, forKey: .rating)
         ratingCount = try container.decode(Int.self, forKey: .ratingCount)

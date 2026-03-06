@@ -344,6 +344,54 @@ class AuthManager: ObservableObject {
         )
     }
 
+    // MARK: - Payout Settings
+
+    func updatePaypalEmail(_ email: String) async -> Bool {
+        struct PaypalRequest: Codable {
+            let paypalEmail: String
+
+            enum CodingKeys: String, CodingKey {
+                case paypalEmail = "paypal_email"
+            }
+        }
+
+        do {
+            let profile: Profile = try await APIClient.shared.request(
+                path: "/accounts/me/",
+                method: .patch,
+                body: PaypalRequest(paypalEmail: email)
+            )
+            currentUser = profile
+            return true
+        } catch {
+            self.error = "Failed to update PayPal email"
+            return false
+        }
+    }
+
+    func updatePreferredPayoutMethod(_ method: String) async -> Bool {
+        struct MethodRequest: Codable {
+            let preferredPayoutMethod: String
+
+            enum CodingKeys: String, CodingKey {
+                case preferredPayoutMethod = "preferred_payout_method"
+            }
+        }
+
+        do {
+            let profile: Profile = try await APIClient.shared.request(
+                path: "/accounts/me/",
+                method: .patch,
+                body: MethodRequest(preferredPayoutMethod: method)
+            )
+            currentUser = profile
+            return true
+        } catch {
+            self.error = "Failed to update payout method"
+            return false
+        }
+    }
+
     // MARK: - Avatar
 
     func uploadAvatar(imageData: Data) async throws -> Profile {
