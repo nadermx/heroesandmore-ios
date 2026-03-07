@@ -86,6 +86,21 @@ struct ProfileView: View {
                     } label: {
                         Label("Platform Auctions", systemImage: "gavel")
                     }
+
+                    NavigationLink {
+                        AffiliateView()
+                    } label: {
+                        Label {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Affiliate Program")
+                                Text("Earn 2% on referred sales")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        } icon: {
+                            Image(systemName: "square.and.arrow.up")
+                        }
+                    }
                 }
 
                 // Alerts & Wishlists
